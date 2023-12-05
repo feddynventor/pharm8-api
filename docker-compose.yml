@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8989:80
+      - 127.0.0.1:8989:80
     links:
       - "database"
     entrypoint: ./wait-for-it.ash -h database.deploy -p 5432 -- npm run prod

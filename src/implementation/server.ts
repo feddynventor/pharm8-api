@@ -10,7 +10,7 @@ import { farmaciaRoutes } from './routes/farmacia.route'
 import { UserRepository } from './repositories/user.repo'
 import { FarmaciaRepository } from './repositories/farmacia.repo'
 
-export const createServer = async (): Promise<FastifyInstance> => {
+export const createServer = async (basePath: string): Promise<FastifyInstance> => {
 
     const server = fastify().withTypeProvider<JsonSchemaToTsProvider>()
   
@@ -24,14 +24,14 @@ export const createServer = async (): Promise<FastifyInstance> => {
       server.register((fastify, opts, next) => {
           fastify.route(route);
           next();
-        }, { prefix: '/auth' });
+        }, { prefix: basePath+'/auth' });
     });
     userRoutes(userRepository).forEach(route => {
       server.register((fastify, opts, next) => {
           fastify.addHook('onRequest', (request) => request.jwtVerify())
           fastify.route(route);
           next();
-        }, { prefix: '/users' });
+        }, { prefix: basePath+'/users' });
     });
 
     const farmaciaRepository = new FarmaciaRepository()
@@ -40,7 +40,7 @@ export const createServer = async (): Promise<FastifyInstance> => {
           fastify.addHook('onRequest', (request) => request.jwtVerify())
           fastify.route(route);
           next();
-        }, { prefix: '/farmacie' });
+        }, { prefix: basePath+'/farmacie' });
     });
 
     await server.ready()
