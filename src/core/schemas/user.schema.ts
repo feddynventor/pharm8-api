@@ -1,6 +1,7 @@
 import { FastifySchema } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
-import { userRoles } from "../../core/database/schema";
+
+import { userRoles } from "../database/schema";
 
 const newUserParams = {
     type: "object",

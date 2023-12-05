@@ -1,5 +1,5 @@
 import { UserTokenVerification } from '../entities/user'
-import { NewUserParams, VerifyUserParams } from '../../implementation/schemas/user.schema'
+import { NewUserParams, VerifyUserParams } from '../schemas/user.schema'
 
 export interface IUserRepository {
   createUser: (u: NewUserParams) => Promise<string>

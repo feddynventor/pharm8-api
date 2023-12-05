@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
 import { UserPayload } from "../../core/entities/user"
 import { IUserRepository } from "../../core/interfaces/user.iface"
-import { NewUserParams, VerifyUserParams } from "../schemas/user.schema"
+import { NewUserParams, VerifyUserParams } from "../../core/schemas/user.schema"
 
 export const verifyUser = (
     userRepository: IUserRepository,
@@ -27,7 +27,7 @@ export const verifyUser = (
 
 export const whoami = 
 () => async function (request: FastifyRequest, reply: FastifyReply) {
-    reply.status(200).send( request.user )
+    reply.status(200).send({ ip: request.socket.remoteAddress, user: request.user})
 }
 
 export const createUser = (

@@ -1,9 +1,8 @@
 import { type RouteOptions } from 'fastify'
 
-import { createUser, whoami } from '../controllers/user.ctrl'
 import { IUserRepository } from '../../core/interfaces/user.iface'
 
-import { newUserSchema } from '../schemas/user.schema'
+import { whoami } from '../controllers/user.ctrl'
 
 export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => ([
   {

@@ -3,7 +3,7 @@ import { FastifyInstance, type RouteOptions } from 'fastify'
 // import { verifyUser } from '../controllers/user.ctrl'
 import { IUserRepository } from '../../core/interfaces/user.iface'
 
-import { newUserSchema, verifyUserSchema } from '../schemas/user.schema'
+import { newUserSchema, verifyUserSchema } from '../../core/schemas/user.schema'
 import { createUser, verifyUser } from '../controllers/user.ctrl'
 
 export const authRoutes = (userRepository: IUserRepository, server: FastifyInstance): RouteOptions[] => ([

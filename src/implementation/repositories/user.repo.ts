@@ -6,7 +6,7 @@ import { users, userRoles } from "../../core/database/schema";
 
 import { eq } from "drizzle-orm";
 import { generate, verify } from "password-hash";
-import { NewUserParams, VerifyUserParams } from "../schemas/user.schema";
+import { NewUserParams, VerifyUserParams } from "../../core/schemas/user.schema";
 
 export class UserRepository implements IUserRepository {
     async createUser(u: NewUserParams): Promise<string> {
@@ -34,6 +34,7 @@ export class UserRepository implements IUserRepository {
         .select()
         .from(users).where(eq(users.cf, u.cf))
         .then(res => {
+            if (res.length == 0) throw new Error("Utente inesistente")
             if ( verify(u.password, res[0].password) ){
                 const { 
                     password, // private data
