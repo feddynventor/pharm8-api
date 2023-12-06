@@ -4,7 +4,7 @@ import { eq, sql } from "drizzle-orm/sql";
 import { farmacie } from "../../core/database/schema";
 
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
-import { NewFarmaciaParams } from "../../core/schemas/farmacia.schema";
+import { ListCittaResponse, NewFarmaciaParams } from "../../core/schemas/farmacia.schema";
 import { FarmaciaPayload } from "../../core/entities/farmacia";
 
 export class FarmaciaRepository implements IFarmaciaRepository {
@@ -21,9 +21,11 @@ export class FarmaciaRepository implements IFarmaciaRepository {
             else return false
         })
         .catch(err => {
+            console.log(err.routine)
             throw new Error(err)
         })
     }
+
     async farmaciaFromCitta(citta: string): Promise<FarmaciaPayload[]> {
         return db
         .select()
@@ -36,11 +38,24 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         })
     }
     async farmaciaFromNome(nome: string, citta: string): Promise<FarmaciaPayload[]> {
-        return db.execute(sql`select * from ${farmacie} where ${farmacie.citta} = ${citta} AND to_tsvector(${farmacie.nome}) @@ to_tsquery('simple',${nome+":*"})`)
+        return db.execute(sql<FarmaciaPayload[]>`select * from ${farmacie} where ${farmacie.citta} = ${citta} AND to_tsvector(${farmacie.nome}) @@ to_tsquery('simple',${nome+":*"})`)
         .then(res => {
             return res.rows.map(({
                 uuid, editor, ...keep   //campi tradotti da ORM
             })=>keep) as FarmaciaPayload[]
+        })
+    }
+
+    async listCitta(): Promise<ListCittaResponse> {
+        return db
+        .select({
+            citta: farmacie.citta,
+            count: sql<number>`cast(count(${farmacie.uuid}) as int)`
+        })
+        .from(farmacie)
+        .groupBy(farmacie.citta)
+        .then(res => {
+            return res
         })
     }
 }

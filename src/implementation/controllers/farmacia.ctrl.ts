@@ -55,3 +55,19 @@ export const findFarmacia = (
     }
 
 }
+
+
+export const listCitta = (
+    farmaciaRepository: IFarmaciaRepository
+) => async function (request: FastifyRequest, reply: FastifyReply) {
+
+    await farmaciaRepository
+    .listCitta()
+    .then(res => {
+        reply.status(200).send(res)
+    })
+    .catch(err => {
+        reply.status(400).send(err)
+    })
+
+}

@@ -1,9 +1,9 @@
 import { RouteOptions } from "fastify";
 
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
-import { getFarmaciaSchema, newFarmaciaSchema } from "../../core/schemas/farmacia.schema";
+import { getFarmaciaSchema, listCittaSchema, newFarmaciaSchema } from "../../core/schemas/farmacia.schema";
 
-import { findFarmacia, signFarmacia } from "../controllers/farmacia.ctrl";
+import { findFarmacia, listCitta, signFarmacia } from "../controllers/farmacia.ctrl";
 
 export const farmaciaRoutes = (farmaciaRepository: IFarmaciaRepository): RouteOptions[] => ([
     {
@@ -16,5 +16,10 @@ export const farmaciaRoutes = (farmaciaRepository: IFarmaciaRepository): RouteOp
       url: '/find',
       schema: getFarmaciaSchema,
       handler: findFarmacia(farmaciaRepository)
+    },{
+      method: 'GET',
+      url: '/list',
+      schema: listCittaSchema,
+      handler: listCitta(farmaciaRepository)
     }
   ])

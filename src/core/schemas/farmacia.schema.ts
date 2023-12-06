@@ -35,3 +35,22 @@ export const getFarmaciaSchema: FastifySchema = {
     security: [{ Bearer: [] }],
     querystring: getFarmaciaParams
 }
+
+
+const listCittaResponse = {
+    type: "array",
+    items: {
+        type: "object",
+        properties: {
+            citta: { type: "string" },
+            count: { type: "number" }
+        }
+    }
+} as const;
+export type ListCittaResponse = FromSchema<typeof listCittaResponse>
+
+export const listCittaSchema: FastifySchema = {
+    description: "[API aperta] Elenca città con numero di farmacie registrate",
+    tags: ["farmacie"],
+    response: listCittaResponse
+}
