@@ -13,7 +13,7 @@ export type NewFarmaciaParams = FromSchema<typeof newFarmaciaParams>
 
 export const newFarmaciaSchema: FastifySchema = {
     description: "Registra una nuova farmacia e la associa all'utente loggato",
-    tags: ["farmacie"],
+    tags: ["farmacie","user"],
     security: [{ Bearer: [] }],
     body: newFarmaciaParams
 }
