@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { UserToken } from "../../core/entities/user";
+import { Role, UserToken } from "../../core/entities/user";
 
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
 import { GetFarmaciaParams, NewFarmaciaParams } from "../../core/schemas/farmacia.schema";
@@ -8,6 +8,12 @@ import { GetFarmaciaParams, NewFarmaciaParams } from "../../core/schemas/farmaci
 export const signFarmacia = (
     farmaciaRepository: IFarmaciaRepository
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
+    
+    if ( (request.user as UserToken).user.role == Role.Utente ) {
+        reply.status(403)
+        return
+    }
+
     await farmaciaRepository
     .signFarmacia(
         (request.user as UserToken).payload.uuid,
