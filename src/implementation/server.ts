@@ -13,8 +13,9 @@ import { FarmaciaRepository } from './repositories/farmacia.repo'
 export const createServer = async (basePath: string): Promise<FastifyInstance> => {
 
     const server = fastify().withTypeProvider<JsonSchemaToTsProvider>()
-  
-    await server.register(docs)
+    console.log("Base path:", basePath)
+
+    await server.register(docs, { prefix: basePath+'/docs' })
     await server.register(require('@fastify/jwt'), {
       secret: 'nonsihamailapappapronta987324'
     })

@@ -1,9 +1,9 @@
 import fp from 'fastify-plugin'
-import { type FastifyPluginAsync } from 'fastify'
+import { FastifyInstance, FastifyPluginOptions, type FastifyPluginAsync } from 'fastify'
 import fastifySwagger, { type FastifyDynamicSwaggerOptions } from '@fastify/swagger'
 import fastifySwaggerUi, { type FastifySwaggerUiOptions } from '@fastify/swagger-ui'
 
-const docsPlugin: FastifyPluginAsync = async (server) => {
+const docsPlugin: FastifyPluginAsync = async (server: FastifyInstance, options: FastifyPluginOptions) => {
   const openApiOptions: FastifyDynamicSwaggerOptions = {
     openapi: {
       info: {
@@ -26,7 +26,7 @@ const docsPlugin: FastifyPluginAsync = async (server) => {
   await server.register(fastifySwagger, openApiOptions)
 
   const openApiUiOptions: FastifySwaggerUiOptions = {
-    routePrefix: '/docs',
+    routePrefix: options.prefix,
     initOAuth: {},
     uiConfig: {
       docExpansion: 'full',
