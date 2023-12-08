@@ -1,9 +1,13 @@
-import { User } from "./user"
-
 export interface Farmacia {
     uuid: string
     nome: string
     citta: string
-    editor: User
+    piva: string
 }
-export type FarmaciaPayload = Omit<Farmacia, 'uuid'|'editor'>
+export type FarmaciaPayload = Omit<Farmacia, 'uuid'>
+
+export class Farmacia implements Farmacia{
+    constructor(obj: FarmaciaPayload){
+        Object.assign(this, obj)
+    }
+}

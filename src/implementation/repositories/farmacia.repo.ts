@@ -1,24 +1,56 @@
 import { QueryResult } from "pg";
 import { db } from "../../core/database/connect";
 import { eq, sql } from "drizzle-orm/sql";
-import { farmacie } from "../../core/database/schema";
+import { farmacie, users } from "../../core/database/schema";
 
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
-import { NewFarmaciaParams } from "../../core/schemas/farmacia.schema";
+import { NewFarmaciaParams, SignFarmaciaParams } from "../../core/schemas/farmacia.schema";
 import { FarmaciaPayload } from "../../core/entities/farmacia";
 
 export class FarmaciaRepository implements IFarmaciaRepository {
-    async signFarmacia(user_id: string, farmacia: NewFarmaciaParams): Promise<boolean> {
+    async signFarmacia(user_id: string, utente: SignFarmaciaParams): Promise<boolean> {
+        // user_id identifica l'utente che gestisce la farmacia da gestire
+        // l'oggetto utente identifica l'utente da aggiungere alla farmacia tramite cf
+        // l'oggetto utente deve avere il campo worksIn vuoto #TODO rivedi
+
+        return db
+        .select({worksIn: users.worksIn})
+        .from(users)
+        .where(eq(users.uuid, user_id))  // controlla che io sia un gestore di farmacia
+        .then(async res => {
+            if (res[0].worksIn){
+                return db
+                .update(users)
+                .set({worksIn: res[0].worksIn})
+                .where(eq(users.cf, utente.cf))
+                .then(res => {
+                    return true
+                })
+            } else {
+                throw new Error("Utente loggato non è un gestore di farmacia")
+            }
+        })
+    }
+    async newFarmacia(user_id: string, farmacia: NewFarmaciaParams): Promise<boolean> {
         return db
         .insert(farmacie)
         .values({
             nome: farmacia.nome,
             citta: farmacia.citta,
-            editor: user_id
+            piva: farmacia.piva
         })
-        .then(res => {
-            if (res.rowCount && res.rowCount>0) return true
-            else return false
+        .returning({
+            insertedId: farmacie.uuid
+        })
+        .then(async res => {
+            return db
+            .update(users)
+            .set({worksIn: res[0].insertedId})
+            .where(eq(users.uuid, user_id))
+            .then(res => {
+                if (res.rowCount==1) return true
+                else return false
+            })
         })
         .catch(err => {
             throw new Error(err)
@@ -31,7 +63,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         .where(eq(farmacie.citta, citta))
         .then(res => {
             return res.map(({
-                uuid, editor, ...keep  //campi da interfaccia
+                uuid, ...keep  //campi da interfaccia
             })=>keep) as FarmaciaPayload[]
         })
     }

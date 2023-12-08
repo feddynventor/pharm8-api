@@ -6,16 +6,34 @@ const newFarmaciaParams = {
     properties: {
         nome: { type: "string", minLength: 3 },
         citta: { type: "string", minLength: 2 },
+        piva: { type: "string", minLength: 11, maxLength: 11 }
     },
-    required: ["citta","nome"],
+    required: ["citta","nome","piva"],
 } as const;
 export type NewFarmaciaParams = FromSchema<typeof newFarmaciaParams>
 
 export const newFarmaciaSchema: FastifySchema = {
-    description: "Registra una nuova farmacia e la associa all'utente loggato",
-    tags: ["farmacie","user"],
+    description: "Registra una nuova farmacia e la associa all'utente loggato, come primo gestore e amministratore",
+    tags: ["farmacie"],
     security: [{ Bearer: [] }],
     body: newFarmaciaParams
+}
+
+
+const signFarmaciaParams = {
+    type: "object",
+    properties: {
+        cf: { type: "string", minLength: 16, maxLength: 16 }
+    },
+    required: ["cf"],
+} as const;
+export type SignFarmaciaParams = FromSchema<typeof signFarmaciaParams>
+
+export const signFarmaciaSchema: FastifySchema = {
+    description: "Associa l'utente specificato tramite Codice Fiscale alla farmacia che si gestisce [worksIn]",
+    tags: ["farmacie"],
+    security: [{ Bearer: [] }],
+    body: signFarmaciaParams
 }
 
 

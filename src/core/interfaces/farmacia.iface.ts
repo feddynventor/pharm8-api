@@ -1,7 +1,9 @@
 import { Farmacia, FarmaciaPayload } from "../entities/farmacia";
+import { NewFarmaciaParams, SignFarmaciaParams } from "../schemas/farmacia.schema";
 
 export interface IFarmaciaRepository {
-    signFarmacia: (user_id: string, farmacia: FarmaciaPayload) => Promise<boolean>
+    newFarmacia: (user_id: string, farmacia: NewFarmaciaParams) => Promise<boolean>
+    signFarmacia: (user_id: string, utente: SignFarmaciaParams) => Promise<boolean>
     farmaciaFromCitta: (citta: string) => Promise<FarmaciaPayload[]>
     farmaciaFromNome: (nome: string, citta: string) => Promise<FarmaciaPayload[]>
 }

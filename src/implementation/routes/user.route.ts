@@ -2,7 +2,8 @@ import { type RouteOptions } from 'fastify'
 
 import { IUserRepository } from '../../core/interfaces/user.iface'
 
-import { whoami } from '../controllers/user.ctrl'
+import { updateUser, whoami } from '../controllers/user.ctrl'
+import { UpdateUserSchema } from '../../core/schemas/user.schema'
 
 export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => ([
   {
@@ -13,6 +14,12 @@ export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => (
       tags: ["user"],
       security: [{ Bearer: [] }],
     },
-    handler: whoami()
+    handler: whoami(userRepository)
+  },
+  {
+    method: 'POST',
+    url: '/edit',
+    schema: UpdateUserSchema,
+    handler: updateUser(userRepository)
   }
 ])
