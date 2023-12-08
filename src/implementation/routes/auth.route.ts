@@ -1,6 +1,5 @@
 import { FastifyInstance, type RouteOptions } from 'fastify'
 
-// import { verifyUser } from '../controllers/user.ctrl'
 import { IUserRepository } from '../../core/interfaces/user.iface'
 
 import { newUserSchema, verifyUserSchema } from '../../core/schemas/user.schema'

@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { UserPayload } from "../../core/entities/user"
+import { UserPayload, UserToken } from "../../core/entities/user"
 import { IUserRepository } from "../../core/interfaces/user.iface"
-import { NewUserParams, VerifyUserParams } from "../../core/schemas/user.schema"
+import { NewUserParams, UpdateUserParams, VerifyUserParams } from "../../core/schemas/user.schema"
 
 export const verifyUser = (
     userRepository: IUserRepository,
@@ -12,10 +12,14 @@ export const verifyUser = (
     .verifyUser( request.body as VerifyUserParams )
     .then(res => {
             const {uuid, ...rest} = res;
+            const {fullname, cf, ...rest2} = rest;
+
             if (res) reply.status(200)
                 .send({ token: server.jwt.sign({
                     payload: {uuid},
-                    user: rest
+                    user: {  // dati basilari non modificabili
+                        fullname, cf
+                    }
                 }) })
             else
                 reply.status(401)
@@ -25,9 +29,15 @@ export const verifyUser = (
         })
 }
 
-export const whoami = 
-() => async function (request: FastifyRequest, reply: FastifyReply) {
-    reply.status(200).send({ ip: request.socket.remoteAddress, user: request.user})
+export const whoami = (
+    userRepository: IUserRepository
+) => async function (request: FastifyRequest, reply: FastifyReply) {
+    // reply.status(200).send({ ip: request.socket.remoteAddress, user: request.user})
+    await userRepository
+    .getUser( (request.user as UserToken).payload.uuid )
+    .then( res => {
+        reply.status(200).send(res)
+    })
 }
 
 export const createUser = (
@@ -36,15 +46,32 @@ export const createUser = (
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await userRepository
         .createUser( request.body as NewUserParams )
-        .then(async (res) => {
+        .then((res) => {
             if (res) reply.status(200)
                 .send({ token: server.jwt.sign({
                     payload: {uuid: res},
-                    user: request.body as UserPayload
+                    user: request.body as Omit<UserPayload, 'uuid'|'password'>
                 }) })
             else
                 reply.status(401)
             
+        })
+        .catch(err => {
+            reply.status(400).send(err)
+        })
+}
+
+export const updateUser = (
+    userRepository: IUserRepository,
+) => async function (request: FastifyRequest, reply: FastifyReply) {
+
+    // ALTRE PROPRIETA
+    await userRepository
+        .updateFarmaciaPreferita( 
+            (request.user as UserToken).payload.uuid,
+            request.body as UpdateUserParams
+        ).then(() => {
+            reply.status(200)
         })
         .catch(err => {
             reply.status(400).send(err)
