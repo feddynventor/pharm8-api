@@ -1,8 +1,11 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { UserPayload, UserToken } from "../../core/entities/user"
+import { UserToken } from "../../core/entities/user"
+
 import { IUserRepository } from "../../core/interfaces/user.iface"
+
 import { NewUserParams, UpdateUserParams, VerifyUserParams } from "../../core/schemas/user.schema"
+import { controllaCF } from "../helpers/cf_checker"
 
 export const verifyUser = (
     userRepository: IUserRepository,
@@ -44,21 +47,22 @@ export const createUser = (
     userRepository: IUserRepository,
     server: FastifyInstance
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
-    await userRepository
+    await controllaCF( (request.body as NewUserParams).cf )
+    .then(async () => {
+        await userRepository
         .createUser( request.body as NewUserParams )
         .then((res) => {
             if (res) reply.status(200)
                 .send({ token: server.jwt.sign({
                     payload: {uuid: res},
-                    user: request.body as Omit<UserPayload, 'uuid'|'password'>
+                    user: request.body as NewUserParams
                 }) })
             else
                 reply.status(401)
-            
         })
-        .catch(err => {
-            reply.status(400).send(err)
-        })
+    }).catch(()=>{
+        reply.status(400).send({err: "Codice fiscale non valido"})
+    })
 }
 
 export const updateUser = (
