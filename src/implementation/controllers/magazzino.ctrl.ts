@@ -10,7 +10,7 @@ export const updateGiacenza = (
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
 
     const { differenza, totale } = request.query as UpdateGiacenzaQuery
-    if (!differenza && !totale) reply.status(400).send({err: "Dato di aggiornamento non specificato"})
+    if (!differenza && !totale) reply.status(400).send({message: "Dato di aggiornamento non specificato"})
 
     await magazzinoRepository
     .updateGiacenza(

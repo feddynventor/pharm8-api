@@ -61,7 +61,7 @@ export const createUser = (
                 reply.status(401)
         })
     }).catch(()=>{
-        reply.status(400).send({err: "Codice fiscale non valido"})
+        reply.status(400).send({message: "Codice fiscale non valido"})
     })
 }
 
