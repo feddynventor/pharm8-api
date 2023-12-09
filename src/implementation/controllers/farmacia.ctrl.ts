@@ -12,9 +12,8 @@ export const newFarmacia = (
     .newFarmacia(
         (request.user as UserToken).payload.uuid,
         request.body as NewFarmaciaParams
-    ).then(res => {
-        if (res) reply.status(201)
-        else reply.status(500)
+    ).then(() => {
+        reply.status(201)
     })
     .catch(err => {
         reply.status(400).send(err)
@@ -29,8 +28,8 @@ export const signFarmacia = (
     .signFarmacia(
         (request.user as UserToken).payload.uuid,
         request.body as SignFarmaciaParams
-    ).then(res => {
-        if (res) reply.status(201)
+    ).then(() => {
+        reply.status(200)
     })
     .catch(err => {
         reply.status(400).send(err)
@@ -48,7 +47,7 @@ export const findFarmacia = (
         .farmaciaFromNome(data.nome,data.citta)
         .then(res => {
             if (res.length>0) reply.status(200).send(res)
-            else reply.status(404).send("Nessun risultato")
+            else reply.status(404).send({err: "Nessun risultato"})
         })
         .catch(err => {
             reply.status(500).send(err)
@@ -58,7 +57,7 @@ export const findFarmacia = (
         .farmaciaFromCitta(data.citta)
         .then(res => {
             if (res.length>0) reply.status(200).send(res)
-            else reply.status(404).send("Nessuna farmacia in questa citta")
+            else reply.status(404).send({err: "Nessuna farmacia in questa citta"})
         })
         .catch(err => {
             reply.status(500).send(err)

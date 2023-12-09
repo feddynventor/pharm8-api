@@ -94,7 +94,7 @@ export class UserRepository implements IUserRepository {
         })
     }
 
-    async updateFarmaciaPreferita(user_id: string, f: UpdateUserParams): Promise<boolean> {
+    async updateFarmaciaPreferita(user_id: string, f: UpdateUserParams): Promise<void> {
         return db
         .select({uuid: farmacie.uuid})
         .from(farmacie)

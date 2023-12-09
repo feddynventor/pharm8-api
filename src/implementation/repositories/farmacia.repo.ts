@@ -8,10 +8,9 @@ import { NewFarmaciaParams, SignFarmaciaParams } from "../../core/schemas/farmac
 import { FarmaciaPayload } from "../../core/entities/farmacia";
 
 export class FarmaciaRepository implements IFarmaciaRepository {
-    async signFarmacia(user_id: string, utente: SignFarmaciaParams): Promise<boolean> {
+    async signFarmacia(user_id: string, utente: SignFarmaciaParams): Promise<void> {
         // user_id identifica l'utente che gestisce la farmacia da gestire
         // l'oggetto utente identifica l'utente da aggiungere alla farmacia tramite cf
-        // l'oggetto utente deve avere il campo worksIn vuoto #TODO rivedi
 
         return db
         .select({worksIn: users.worksIn})
@@ -23,15 +22,13 @@ export class FarmaciaRepository implements IFarmaciaRepository {
                 .update(users)
                 .set({worksIn: res[0].worksIn})
                 .where(eq(users.cf, utente.cf))
-                .then(res => {
-                    return true
-                })
+                .then()  //update AS a promise
             } else {
                 throw new Error("Utente loggato non è un gestore di farmacia")
             }
         })
     }
-    async newFarmacia(user_id: string, farmacia: NewFarmaciaParams): Promise<boolean> {
+    async newFarmacia(user_id: string, farmacia: NewFarmaciaParams): Promise<void> {
         return db
         .insert(farmacie)
         .values({
@@ -48,8 +45,8 @@ export class FarmaciaRepository implements IFarmaciaRepository {
             .set({worksIn: res[0].insertedId})
             .where(eq(users.uuid, user_id))
             .then(res => {
-                if (res.rowCount==1) return true
-                else return false
+                if (res.rowCount==1) return
+                else throw new Error("Utente non associabile")
             })
         })
         .catch(err => {
