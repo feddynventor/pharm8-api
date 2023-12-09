@@ -11,11 +11,11 @@ import { prodottiRoutes } from './routes/prodotto.route'
 import { UserRepository } from './repositories/user.repo'
 import { FarmaciaRepository } from './repositories/farmacia.repo'
 import { ProdottoRepository } from './repositories/prodotto.repo'
+import { MagazzinoRepository } from './repositories/magazzino.repo'
 
 export const createServer = async (basePath: string): Promise<FastifyInstance> => {
 
     const server = fastify().withTypeProvider<JsonSchemaToTsProvider>()
-    console.log("Base path:", basePath)
 
     await server.register(docs, { prefix: basePath+'/docs' })
     await server.register(require('@fastify/jwt'), {
@@ -38,7 +38,8 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
     });
 
     const farmaciaRepository = new FarmaciaRepository()
-    farmaciaRoutes(farmaciaRepository).forEach(route => {
+    const magazzinoRepository = new MagazzinoRepository()
+    farmaciaRoutes(farmaciaRepository, magazzinoRepository).forEach(route => {
       server.register((fastify, opts, next) => {
           fastify.addHook('onRequest', (request) => request.jwtVerify())
           fastify.route(route);
@@ -47,7 +48,7 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
     });
 
     const prodottiRepository = new ProdottoRepository()
-    prodottiRoutes(prodottiRepository).forEach(route => {
+    prodottiRoutes(prodottiRepository, magazzinoRepository).forEach(route => {
       server.register((fastify, opts, next) => {
           fastify.addHook('onRequest', (request) => request.jwtVerify())
           fastify.route(route);

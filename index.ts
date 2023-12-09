@@ -3,6 +3,11 @@ import dotenv from 'dotenv';
 dotenv.config();  // Load environment variables from .env file 
 
 (async ()=>{
+    console.log({
+        port: process.env.API_PORT,
+        database: process.env.PG_HOST+':'+process.env.PG_PORT+'/'+process.env.PG_DATABASE,
+        basePath: process.env.BASEPATH
+    })
     if (process.env.API_PORT)
         (await createServer(process.env.BASEPATH || '/')).listen({port: parseInt(process.env.API_PORT), host: "0.0.0.0"})
     else

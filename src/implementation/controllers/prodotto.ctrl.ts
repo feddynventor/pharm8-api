@@ -21,7 +21,6 @@ export const searchProdotto = (
 export const getProdotto = (
     prodottoRepository: IProdottoRepository
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
-    console.log(request.params)
     await prodottoRepository
     .getProdotto( (request.params as GetProdottoParams).aic as string)
     .then(res => {
