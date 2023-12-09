@@ -37,3 +37,14 @@ export const prodotti = pgTable(
         index: index("aic_idx").on(table.aic, table.uuid)
     })
 )
+
+export const magazzino = pgTable(
+    "magazzino", {
+        uuid: uuid('uuid').primaryKey().default(sql`gen_random_uuid()`),
+        farmacia: uuid('farmacia').notNull().references(()=>farmacie.uuid),
+        prodotto: uuid('prodotto').notNull().references(()=>prodotti.uuid),
+        quantita: numeric('quantita').notNull().default("0"),
+    }, (table) => ({
+        index: index("farmacia_prodotto_idx").on(table.farmacia, table.prodotto)
+    })
+)
