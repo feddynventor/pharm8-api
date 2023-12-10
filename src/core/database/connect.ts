@@ -1,5 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
+import * as schema from "../database/schema"
+
 import dotenv from 'dotenv'; 
 dotenv.config();  // Load environment variables from .env file 
 
@@ -13,4 +15,4 @@ const client = new Client({
 });
  
 client.connect();
-export const db = drizzle(client);
+export const db = drizzle(client, { schema });

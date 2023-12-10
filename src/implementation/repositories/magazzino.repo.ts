@@ -1,6 +1,7 @@
 import { db } from "../../core/database/connect";
 import { and, eq, sql } from "drizzle-orm/sql";
-import { farmacie, magazzino, prodotti, users } from "../../core/database/schema";
+import { farmacie, magazzino } from "../../core/database/schema";
+import * as common from "./common.repo";
 
 import { FarmaciaPayload } from "../../core/entities/farmacia";
 
@@ -8,9 +9,9 @@ import { IMagazzinoRepository } from "../../core/interfaces/magazzino.iface";
 
 export class MagazzinoRepository implements IMagazzinoRepository {
     async updateGiacenza(user_id: string, aic: string, differenza?: number, totale?: number): Promise<number> {        
-        return getFarmaciaFromEditor(user_id)   // giacenza controllabile solo da gestore di farmacia
+        return common.getFarmaciaFromEditor(user_id)   // giacenza controllabile solo da gestore di farmacia
         .then(async farmacia_uuid => {
-            return getFarmacoFromAIC(aic)       // aic identifica il prodotto da aggiornare, UUID la relativa chiave esterna
+            return common.getFarmacoFromAIC(aic)       // aic identifica il prodotto da aggiornare, UUID la relativa chiave esterna
             .then(async farmaco_uuid => {
                 return db.transaction( async (tx) => {
                     return tx
@@ -59,7 +60,7 @@ export class MagazzinoRepository implements IMagazzinoRepository {
     }
 
     async checkDisponibilita(aic: string): Promise<{f: FarmaciaPayload, qt: number}[]> {
-        return getFarmacoFromAIC(aic)
+        return common.getFarmacoFromAIC(aic)
         .then( async farmaco_uuid => {
             return db
             .select()
@@ -80,25 +81,4 @@ export class MagazzinoRepository implements IMagazzinoRepository {
             })
         })
     }
-}
-
-const getFarmaciaFromEditor = async (user_id: string): Promise<string> => {
-    return db
-    .select({farmacia_uuid: users.worksIn})
-    .from(users)
-    .where(eq(users.uuid, user_id))
-    .then(res => {
-        if (res.length==0 || !res[0].farmacia_uuid) throw new Error("Utente non è un gestore di farmacia")
-        else return res[0].farmacia_uuid
-    })
-}
-const getFarmacoFromAIC = async (aic: string): Promise<string> => {
-    return db
-    .select({uuid: prodotti.uuid})
-    .from(prodotti)
-    .where(eq(prodotti.aic, aic))
-    .then(res => {
-        if (res.length==0) throw new Error("Prodotto inesistente")
-        else return res[0].uuid
-    })
 }

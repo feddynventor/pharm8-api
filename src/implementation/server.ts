@@ -7,11 +7,13 @@ import { userRoutes } from './routes/user.route'
 import { authRoutes } from './routes/auth.route'
 import { farmaciaRoutes } from './routes/farmacia.route'
 import { prodottiRoutes } from './routes/prodotto.route'
+import { ordiniRoutes } from './routes/ordine.route'
 
 import { UserRepository } from './repositories/user.repo'
 import { FarmaciaRepository } from './repositories/farmacia.repo'
 import { ProdottoRepository } from './repositories/prodotto.repo'
 import { MagazzinoRepository } from './repositories/magazzino.repo'
+import { OrdineRepository } from './repositories/ordine.repo'
 
 export const createServer = async (basePath: string): Promise<FastifyInstance> => {
 
@@ -54,6 +56,15 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
           fastify.route(route);
           next();
         }, { prefix: basePath+'/prodotti' });
+    });
+
+    const ordiniRepository = new OrdineRepository()
+    ordiniRoutes(ordiniRepository).forEach(route => {
+      server.register((fastify, opts, next) => {
+          fastify.addHook('onRequest', (request) => request.jwtVerify())
+          fastify.route(route);
+          next();
+        }, { prefix: basePath+'/ordine' });
     });
 
     await server.ready()
