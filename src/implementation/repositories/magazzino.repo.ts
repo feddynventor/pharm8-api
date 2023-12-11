@@ -39,11 +39,11 @@ export class MagazzinoRepository implements IMagazzinoRepository {
                             .then( res =>{
                                 return res[0].newQta
                             })
-                        } else if (parseInt(res[0].newQta) < 0) {
+                        } else if (res[0].newQta < 0) {
                             // tx.rollback()
                             throw new Error(
                                 "Disponibilita in magazzino non sufficiente per "
-                                +(parseInt(res[0].newQta)*-1)+" unita"
+                                +(res[0].newQta*-1)+" unita"
                                 )  //`throw` triggers Rollback
                         } else {    //update OK
                             return res[0].newQta
@@ -75,7 +75,7 @@ export class MagazzinoRepository implements IMagazzinoRepository {
                     const { uuid, ...rest } = f.farmacie
                     return {
                         f: rest,
-                        qt: parseInt(f.magazzino.quantita)
+                        qt: f.magazzino.quantita
                     }
                 })
             })

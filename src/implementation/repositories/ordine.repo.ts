@@ -4,7 +4,7 @@ import { IOrdineRepository } from "../../core/interfaces/ordine.iface";
 import { ordini } from "../../core/database/schema";
 
 import * as common from "./common.repo";
-import { Ordine } from "../../core/entities/ordine";
+import { OrderStatus, Ordine } from "../../core/entities/ordine";
 
 export class OrdineRepository implements IOrdineRepository {
     async newOrdine(user_id: string, piva: string, aic: string, qt: number): Promise<void> {
@@ -19,7 +19,7 @@ export class OrdineRepository implements IOrdineRepository {
                     farmacia: farmacia_uuid,
                     utente: user_id,
                     prodotto: farmaco_uuid,
-                    quantita: qt.toString()
+                    quantita: qt
                 })
                 .then()
 
@@ -27,24 +27,35 @@ export class OrdineRepository implements IOrdineRepository {
         })
     }
 
-    async getListaOrdini(user_id: string): Promise<Ordine[] | void[]> {
+    async getListaOrdini(user_id: string, status: OrderStatus): Promise<Ordine[] | void[]> {
         return common.getFarmaciaFromEditor(user_id)
         .then(async farmacia_uuid => {
             return db.query.ordini.findMany({
                 with: {
-                    farmacia: true,
-                    prodotto: true,
-                    utente: true
+                    farmacia: {
+                        columns: {
+                            uuid: false
+                        }
+                    },
+                    prodotto: {
+                        columns: {
+                            uuid: false
+                        }
+                    },
+                    utente: {
+                        columns: {
+                            cf: true,
+                            fullname: true
+                        }
+                    }
                 },
                 where: and(
-                    eq(ordini.utente, user_id),
-                    eq(ordini.farmacia, farmacia_uuid)
+                    eq(ordini.farmacia, farmacia_uuid),
+                    eq(ordini.status, status)
                 )
             }).then(res => {
-                // if (res.length == 0) return []
-                // return res as Ordine[]
-                console.log(res)
-                return []
+                if (res.length == 0) return []
+                return res as Ordine[]
             });
         });
     }

@@ -13,11 +13,7 @@ export class ProdottoRepository implements IProdottoRepository {
         .where(eq(prodotti.aic, aic))
         .then(res => {
             if (res.length == 0) throw new Error("Prodotto non trovato")
-            return {
-                aic: res[0].aic,
-                nome: res[0].nome,
-                prezzo: parseFloat(res[0].prezzo)
-            } as ProdottoPayload
+            return res[0] as ProdottoPayload
         })
         .catch(err => {
             throw new Error(err)

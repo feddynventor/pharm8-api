@@ -1,5 +1,6 @@
 import { FastifySchema } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
+import { orderStatus } from "../database/schema";
 
 const newOrdineParams = {
     type: "object",
@@ -17,4 +18,21 @@ export const newOrdineSchema: FastifySchema = {
     tags: ['ordini'],
     security: [{ Bearer: [] }],
     body: newOrdineParams
+}
+
+
+const getListaOrdiniParams = {
+    type: "object",
+    properties: {
+        status: { type: "string", enum: orderStatus.enumValues }
+    },
+    required: ["status"]
+} as const;
+export type GetListaOrdiniParams = FromSchema<typeof getListaOrdiniParams>;
+
+export const getListaOrdiniSchema: FastifySchema = {
+    description: '',
+    tags: ['ordini','farmacia'],
+    security: [{ Bearer: [] }],
+    querystring: getListaOrdiniParams
 }

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { uuid, pgTable, varchar, index, numeric, decimal, pgEnum, timestamp } from "drizzle-orm/pg-core";
+import { uuid, pgTable, varchar, index, real, decimal, pgEnum, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm/sql";
 
 export const users = pgTable(
@@ -32,7 +32,7 @@ export const prodotti = pgTable(
         aic: varchar('codice_aic', {length: 9}).unique().notNull(),
         nome: varchar('nome').notNull(),
         // descrizione: varchar('descrizione'),
-        prezzo: decimal('prezzo').notNull(),
+        prezzo: real('prezzo').notNull(),
     }, (table) => ({
         index: index("aic_idx").on(table.aic, table.uuid)
     })
@@ -43,7 +43,7 @@ export const magazzino = pgTable(
         uuid: uuid('uuid').primaryKey().default(sql`gen_random_uuid()`),
         farmacia: uuid('farmacia').notNull().references(()=>farmacie.uuid),
         prodotto: uuid('prodotto').notNull().references(()=>prodotti.uuid),
-        quantita: numeric('quantita').notNull().default("0"),
+        quantita: real('quantita').notNull().default(0),
     }, (table) => ({
         index: index("farmacia_prodotto_idx").on(table.farmacia, table.prodotto)
     })
@@ -56,9 +56,9 @@ export const ordini = pgTable(
         farmacia: uuid('farmacia').notNull().references(()=>farmacie.uuid),
         utente: uuid('utente').notNull().references(()=>users.uuid),
         prodotto: uuid('prodotto').notNull().references(()=>prodotti.uuid),
-        quantita: numeric('quantita').notNull().default("1"),
-        date: timestamp('timestamp').default(sql`now()`),
-        status: orderStatus('status').default('PENDING')
+        quantita: real('quantita').notNull().default(1),
+        date: timestamp('timestamp', { withTimezone: true }).notNull().default(sql`now()`),
+        status: orderStatus('status').notNull().default('PENDING')
     }, (table) => ({
         index: index("order_idx").on(table.farmacia, table.date)
     })

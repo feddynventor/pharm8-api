@@ -1,5 +1,5 @@
-import { Farmacia } from "./farmacia";
-import { Prodotto } from "./prodotto";
+import { FarmaciaPayload } from "./farmacia";
+import { Prodotto, ProdottoPayload } from "./prodotto";
 import { User } from "./user";
 
 export enum OrderStatus {
@@ -10,9 +10,9 @@ export enum OrderStatus {
 
 export interface Ordine {
     uuid: string;
-    farmacia: Farmacia;
-    utente: User;
-    prodotto: Prodotto;
+    farmacia: FarmaciaPayload;
+    prodotto: ProdottoPayload;
+    utente: Omit<User, 'password'|'uuid'>;
     quantita: number;
     date: Date;
     status: OrderStatus;
