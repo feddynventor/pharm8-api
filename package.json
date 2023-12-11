@@ -23,6 +23,7 @@
     "drizzle-orm": "^0.29.0",
     "fastify": "^4.24.3",
     "fastify-plugin": "^4.5.1",
+    "firebase-admin": "^12.0.0",
     "json-schema-to-ts": "^2.9.2",
     "password-hash": "^1.2.2",
     "pg": "^8.11.3"

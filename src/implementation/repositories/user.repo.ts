@@ -11,7 +11,8 @@ import { Farmacia, FarmaciaPayload } from "../../core/entities/farmacia";
 
 const getUserObject = async (res: any): Promise<UserPayload> => {
     if (!!!res) throw new Error("No user found")
-    const { 
+    const {
+        firebase,
         password,   // dati privati
         favourite,  // extracted uuids
         worksIn,
@@ -55,15 +56,13 @@ export class UserRepository implements IUserRepository {
             cf: u.cf,
             password: generate(u.password),
             fullname: u.fullname,
+            firebase: u.firebase_token
         })
         .returning({
             insertedId: users.uuid
         })
         .then(res => {
             return res[0].insertedId
-        })
-        .catch(err => {
-            throw new Error(err)
         })
     }
 
@@ -89,9 +88,6 @@ export class UserRepository implements IUserRepository {
                 throw new Error("Password errata")
         } )
         .then( getUserObject )
-        .catch(err => {
-            throw new Error(err)
-        })
     }
 
     async updateFarmaciaPreferita(user_id: string, f: UpdateUserParams): Promise<void> {

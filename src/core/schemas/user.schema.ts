@@ -7,6 +7,7 @@ const newUserParams = {
         cf: { type: "string", minLength: 16, maxLength: 16 },
         password: { type: "string", minLength: 8 },
         fullname: { type: "string", minLength: 3 },
+        firebase_token: { type: "string" }
     },
     required: ["cf","password","fullname"],
 } as const;
@@ -22,7 +23,8 @@ const verifyUserParams = {
     type: "object",
     properties: {
         cf: { type: "string", minLength: 16, maxLength: 16 },
-        password: { type: "string", minLength: 8 }
+        password: { type: "string", minLength: 8 },
+        firebase_token: { type: "string" }
     },
     required: ["cf","password"],
 } as const;

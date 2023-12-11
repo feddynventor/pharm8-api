@@ -2,6 +2,7 @@ import { Farmacia } from "./farmacia"
 
 export interface User {
   uuid: string
+  // firebase: string
   password: string
   fullname: string
   cf: string
