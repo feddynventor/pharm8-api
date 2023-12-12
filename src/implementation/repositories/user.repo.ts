@@ -87,6 +87,18 @@ export class UserRepository implements IUserRepository {
             } else
                 throw new Error("Password errata")
         } )
+        .then( res => {
+            if (res[0].firebase != u.firebase_token)
+                return db
+                .update(users)
+                .set({
+                    firebase: u.firebase_token
+                })
+                .where(eq(users.cf, u.cf))
+                .then( () => res )
+            
+            return res
+        })
         .then( getUserObject )
     }
 

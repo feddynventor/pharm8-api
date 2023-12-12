@@ -1,5 +1,5 @@
 import { IOrdineRepository } from "../../core/interfaces/ordine.iface";
-import { User, UserToken } from "../../core/entities/user";
+import { User } from "../../core/entities/user";
 import { FastifyRequest } from "fastify/types/request";
 import { FastifyReply } from "fastify/types/reply";
 import { GetListaOrdiniParams, NewOrdineParams } from "../../core/schemas/ordine.schema";

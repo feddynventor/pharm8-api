@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { User, UserToken } from "../../core/entities/user"
+import { User } from "../../core/entities/user"
 
 import { IUserRepository } from "../../core/interfaces/user.iface"
 

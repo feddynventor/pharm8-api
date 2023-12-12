@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { User, UserToken } from "../../core/entities/user";
+import { User } from "../../core/entities/user";
 
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
 import { GetFarmaciaParams, NewFarmaciaParams, SignFarmaciaParams } from "../../core/schemas/farmacia.schema";

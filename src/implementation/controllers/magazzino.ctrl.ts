@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify"
-import { User, UserToken } from "../../core/entities/user"
+import { User } from "../../core/entities/user"
 
 import { IMagazzinoRepository } from "../../core/interfaces/magazzino.iface"
 
