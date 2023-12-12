@@ -14,6 +14,7 @@ import { FarmaciaRepository } from './repositories/farmacia.repo'
 import { ProdottoRepository } from './repositories/prodotto.repo'
 import { MagazzinoRepository } from './repositories/magazzino.repo'
 import { OrdineRepository } from './repositories/ordine.repo'
+import { UserToken } from '../core/entities/user'
 
 export const createServer = async (basePath: string): Promise<FastifyInstance> => {
 
@@ -23,8 +24,23 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
     await server.register(require('@fastify/jwt'), {
       secret: 'nonsihamailapappapronta987324'
     })
-  
+
     const userRepository = new UserRepository()
+
+    server.addHook('onRequest', (request, reply, next) => {
+      if (request.originalUrl.includes('/auth')) next();
+      else request.jwtVerify().then( async jwt=>{
+        return userRepository
+        .getUser( (jwt as UserToken).payload.uuid )
+        .then( res => {
+            request.user = res
+            next()
+        })
+      }).catch(err => {
+        reply.status(401).send({error: "Token non valido"})
+      })
+    })
+  
     authRoutes(userRepository, server).forEach(route => {
       server.register((fastify, opts, next) => {
           fastify.route(route);
@@ -33,7 +49,6 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
     });
     userRoutes(userRepository).forEach(route => {
       server.register((fastify, opts, next) => {
-          fastify.addHook('onRequest', (request) => request.jwtVerify())
           fastify.route(route);
           next();
         }, { prefix: basePath+'/users' });
@@ -43,7 +58,6 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
     const magazzinoRepository = new MagazzinoRepository()
     farmaciaRoutes(farmaciaRepository, magazzinoRepository).forEach(route => {
       server.register((fastify, opts, next) => {
-          fastify.addHook('onRequest', (request) => request.jwtVerify())
           fastify.route(route);
           next();
         }, { prefix: basePath+'/farmacie' });
@@ -52,7 +66,6 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
     const prodottiRepository = new ProdottoRepository()
     prodottiRoutes(prodottiRepository, magazzinoRepository).forEach(route => {
       server.register((fastify, opts, next) => {
-          fastify.addHook('onRequest', (request) => request.jwtVerify())
           fastify.route(route);
           next();
         }, { prefix: basePath+'/prodotti' });
@@ -61,7 +74,6 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
     const ordiniRepository = new OrdineRepository()
     ordiniRoutes(ordiniRepository).forEach(route => {
       server.register((fastify, opts, next) => {
-          fastify.addHook('onRequest', (request) => request.jwtVerify())
           fastify.route(route);
           next();
         }, { prefix: basePath+'/ordine' });

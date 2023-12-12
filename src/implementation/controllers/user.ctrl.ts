@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { UserToken } from "../../core/entities/user"
+import { User, UserToken } from "../../core/entities/user"
 
 import { IUserRepository } from "../../core/interfaces/user.iface"
 
@@ -32,15 +32,9 @@ export const verifyUser = (
         })
 }
 
-export const whoami = (
-    userRepository: IUserRepository
-) => async function (request: FastifyRequest, reply: FastifyReply) {
-    // reply.status(200).send({ ip: request.socket.remoteAddress, user: request.user})
-    await userRepository
-    .getUser( (request.user as UserToken).payload.uuid )
-    .then( res => {
-        reply.status(200).send(res)
-    })
+export const whoami = 
+() => async function (request: FastifyRequest, reply: FastifyReply) {
+    reply.status(200).send({ ip: request.socket.remoteAddress, user: request.user as User})
 }
 
 export const createUser = (
@@ -72,7 +66,7 @@ export const updateUser = (
     // ALTRE PROPRIETA
     await userRepository
         .updateFarmaciaPreferita( 
-            (request.user as UserToken).payload.uuid,
+            (request.user as User).uuid,
             request.body as UpdateUserParams
         ).then(() => {
             reply.status(200)

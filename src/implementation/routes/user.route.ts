@@ -14,7 +14,7 @@ export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => (
       tags: ["user"],
       security: [{ Bearer: [] }],
     },
-    handler: whoami(userRepository)
+    handler: whoami()
   },
   {
     method: 'POST',

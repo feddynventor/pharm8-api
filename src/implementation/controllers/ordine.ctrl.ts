@@ -1,5 +1,5 @@
 import { IOrdineRepository } from "../../core/interfaces/ordine.iface";
-import { UserToken } from "../../core/entities/user";
+import { User, UserToken } from "../../core/entities/user";
 import { FastifyRequest } from "fastify/types/request";
 import { FastifyReply } from "fastify/types/reply";
 import { GetListaOrdiniParams, NewOrdineParams } from "../../core/schemas/ordine.schema";
@@ -11,7 +11,7 @@ export const newOrdine = (
     const { piva, aic, qt } = request.body as NewOrdineParams
     await ordineRepository
     .newOrdine(
-        (request.user as UserToken).payload.uuid,
+        (request.user as User).uuid,
         piva, aic, 
         qt? qt : 1
     )
@@ -26,7 +26,7 @@ export const getListaOrdini = (
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await ordineRepository
     .getListaOrdini(
-        (request.user as UserToken).payload.uuid,   //gestore Farmacia
+        (request.user as User).uuid,   //gestore Farmacia
         OrderStatus[ (request.query as GetListaOrdiniParams).status ]
     ).then(res => {
         if (res.length == 0) reply.code(404)

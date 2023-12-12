@@ -10,7 +10,7 @@ import { NewUserParams, UpdateUserParams, VerifyUserParams } from "../../core/sc
 import { Farmacia, FarmaciaPayload } from "../../core/entities/farmacia";
 
 const getUserObject = async (res: any): Promise<UserPayload> => {
-    if (!!!res) throw new Error("No user found")
+    if (res.length==0) throw new Error("No user found")
     const {
         firebase,
         password,   // dati privati
