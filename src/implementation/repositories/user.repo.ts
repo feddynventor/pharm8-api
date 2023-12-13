@@ -1,4 +1,4 @@
-import { User, UserPayload } from "../../core/entities/user";
+import { UserPayload } from "../../core/entities/user";
 import { IUserRepository } from "../../core/interfaces/user.iface";
 
 import { db } from "../../core/database/connect";
@@ -7,46 +7,6 @@ import { farmacie, users } from "../../core/database/schema";
 import { eq } from "drizzle-orm";
 import { generate, verify } from "password-hash";
 import { NewUserParams, UpdateUserParams, VerifyUserParams } from "../../core/schemas/user.schema";
-import { Farmacia, FarmaciaPayload } from "../../core/entities/farmacia";
-
-const getUserObject = async (res: any): Promise<UserPayload> => {
-    if (res.length==0) throw new Error("No user found")
-    const {
-        firebase,
-        password,   // dati privati
-        favourite,  // extracted uuids
-        worksIn,
-        ...rest
-    } = res[0];
-
-    let userObj: UserPayload = new User();
-
-    if (favourite){
-        await db.select().from(farmacie)
-        .where(eq(farmacie.uuid, favourite))
-        .then(res => {
-            userObj.favourite = new Farmacia(res[0] as Omit<FarmaciaPayload, 'uuid'>)
-        })
-        .catch(err => {
-            userObj.favourite = undefined
-        })
-    }
-    if (worksIn){
-        await db.select().from(farmacie)
-        .where(eq(farmacie.uuid, worksIn))
-        .then(res => {
-            userObj.worksIn = new Farmacia(res[0] as Omit<FarmaciaPayload, 'uuid'>)
-        })
-        .catch(err => {
-            userObj.worksIn = undefined
-        })
-    }
-
-    return {
-        ...userObj,
-        ...rest
-    } as UserPayload
-}
 
 export class UserRepository implements IUserRepository {
     async createUser(u: NewUserParams): Promise<string> {
@@ -68,14 +28,19 @@ export class UserRepository implements IUserRepository {
 
     async getUser(user_id: string): Promise<UserPayload> {
         // si conosce uuid da token jwt
-        return db
-        .select()
-        .from(users)
-        .where(eq(users.uuid, user_id))
-        .then( getUserObject )
+        return db.query.users.findFirst({
+            with: {
+                favourite: true,
+                worksIn: true
+            },
+            columns: {
+                password: false
+            },
+            where: eq(users.uuid, user_id)
+        }).then()
     }
 
-    async verifyUser(u: VerifyUserParams): Promise<UserPayload> {
+    async verifyUser(u: VerifyUserParams): Promise<string> {
         // si conosce cf e password, l'oggetto utente viene usato per calcolare il token jwt
         return db
         .select()
@@ -86,7 +51,7 @@ export class UserRepository implements IUserRepository {
                 return res
             } else
                 throw new Error("Password errata")
-        } )
+        })
         .then( res => {
             if (res[0].firebase != u.firebase_token)
                 return db
@@ -99,7 +64,14 @@ export class UserRepository implements IUserRepository {
             
             return res
         })
-        .then( getUserObject )
+        .then( res => {
+            if (res[0].uuid) return res[0].uuid
+            else throw new Error("Utente inesistente")
+        })
+        .then( this.getUser )
+        .then( user => {
+            return user.uuid
+        })
     }
 
     async updateFarmaciaPreferita(user_id: string, f: UpdateUserParams): Promise<void> {

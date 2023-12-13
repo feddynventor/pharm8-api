@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { User } from "../../core/entities/user";
+import { UserToken } from "../../core/entities/user";
 
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
 import { GetFarmaciaParams, NewFarmaciaParams, SignFarmaciaParams } from "../../core/schemas/farmacia.schema";
@@ -10,7 +10,7 @@ export const newFarmacia = (
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await farmaciaRepository
     .newFarmacia(
-        (request.user as User).uuid,
+        (request.user as UserToken).payload.uuid,
         request.body as NewFarmaciaParams
     ).then(() => {
         reply.status(201)
@@ -26,7 +26,7 @@ export const signFarmacia = (
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await farmaciaRepository
     .signFarmacia(
-        (request.user as User).uuid,
+        (request.user as UserToken).payload.uuid,
         request.body as SignFarmaciaParams
     ).then(() => {
         reply.status(200)

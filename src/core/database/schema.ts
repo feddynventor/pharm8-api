@@ -15,6 +15,16 @@ export const users = pgTable(
         index: index("cf_idx").on(table.cf, table.uuid),
     })
 )
+export const userRelations = relations(users, ({ one })=>({
+    favourite: one(farmacie, {
+        fields: [users.favourite],
+        references: [farmacie.uuid]
+    }),
+    worksIn: one(farmacie, {
+        fields: [users.worksIn],
+        references: [farmacie.uuid]
+    })
+}))
 
 export const farmacie = pgTable(
     "farmacie", {

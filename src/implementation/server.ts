@@ -14,7 +14,7 @@ import { FarmaciaRepository } from './repositories/farmacia.repo'
 import { ProdottoRepository } from './repositories/prodotto.repo'
 import { MagazzinoRepository } from './repositories/magazzino.repo'
 import { OrdineRepository } from './repositories/ordine.repo'
-import { User, UserToken } from '../core/entities/user'
+import { UserToken } from '../core/entities/user'
 
 export const createServer = async (basePath: string): Promise<FastifyInstance> => {
 
@@ -37,7 +37,6 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
         next()
         return;
       }
-      console.log(unproc)
 
       request.jwtVerify()
       .then((jwt)=>{
@@ -45,7 +44,8 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
       })
       .then( userRepository.getUser )
       .then((res)=>{
-        Object.assign(request.user, res)
+        const { uuid, ...user } = res
+        Object.assign(request.user, user)
         next()
       })
       .catch(err => {

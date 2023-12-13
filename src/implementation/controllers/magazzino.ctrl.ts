@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify"
-import { User } from "../../core/entities/user"
+import { UserToken } from "../../core/entities/user"
 
 import { IMagazzinoRepository } from "../../core/interfaces/magazzino.iface"
 
@@ -14,7 +14,7 @@ export const updateGiacenza = (
 
     await magazzinoRepository
     .updateGiacenza(
-        (request.user as User).uuid as string,
+        (request.user as UserToken).payload.uuid as string,     //utente gestore farmacia
         (request.params as UpdateGiacenzaParams).aic as string,
         differenza, totale
     ).then(res => {

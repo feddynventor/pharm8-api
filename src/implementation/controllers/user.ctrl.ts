@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { User } from "../../core/entities/user"
+import { User, UserToken } from "../../core/entities/user"
 
 import { IUserRepository } from "../../core/interfaces/user.iface"
 
@@ -14,12 +14,9 @@ export const verifyUser = (
     await userRepository
     .verifyUser( request.body as VerifyUserParams )
     .then(res => {
-            const {uuid, ...rest} = res;
-            const {fullname, cf, ...rest2} = rest;
-
             if (res) reply.status(200)
                 .send({ token: server.jwt.sign({
-                    payload: {uuid}
+                    payload: {uuid: res}
                 }) })
             else
                 reply.status(401)
@@ -62,7 +59,7 @@ export const updateUser = (
     // ALTRE PROPRIETA
     await userRepository
         .updateFarmaciaPreferita( 
-            (request.user as User).uuid,
+            (request.user as UserToken).payload.uuid,
             request.body as UpdateUserParams
         ).then(() => {
             reply.status(200)
