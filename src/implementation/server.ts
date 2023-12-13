@@ -14,7 +14,7 @@ import { FarmaciaRepository } from './repositories/farmacia.repo'
 import { ProdottoRepository } from './repositories/prodotto.repo'
 import { MagazzinoRepository } from './repositories/magazzino.repo'
 import { OrdineRepository } from './repositories/ordine.repo'
-import { UserToken } from '../core/entities/user'
+import { User, UserToken } from '../core/entities/user'
 
 export const createServer = async (basePath: string): Promise<FastifyInstance> => {
 
@@ -25,19 +25,31 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
       secret: 'nonsihamailapappapronta987324'
     })
 
+    const unprotectedRoutes = ['/auth','/docs']
+
     const userRepository = new UserRepository()
 
     server.addHook('onRequest', (request, reply, next) => {
-      if (request.originalUrl.includes('/auth')) next();
-      else request.jwtVerify().then( async jwt=>{
-        return userRepository
-        .getUser( (jwt as UserToken).payload.uuid )
-        .then( res => {
-            request.user = res
-            next()
-        })
-      }).catch(err => {
-        reply.status(401).send({error: "Token non valido"})
+      const unproc = unprotectedRoutes.filter( route => {
+        if (request.originalUrl.startsWith(basePath+route)) return route
+      })
+      if (unproc.length>0) {
+        next()
+        return;
+      }
+      console.log(unproc)
+
+      request.jwtVerify()
+      .then((jwt)=>{
+        return (jwt as UserToken).payload.uuid
+      })
+      .then( userRepository.getUser )
+      .then((res)=>{
+        Object.assign(request.user, res)
+        next()
+      })
+      .catch(err => {
+        reply.status(401).send({message: "Token non valido"})
       })
     })
   

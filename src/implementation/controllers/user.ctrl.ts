@@ -19,10 +19,7 @@ export const verifyUser = (
 
             if (res) reply.status(200)
                 .send({ token: server.jwt.sign({
-                    payload: {uuid},
-                    user: {  // dati basilari non modificabili
-                        fullname, cf
-                    }
+                    payload: {uuid}
                 }) })
             else
                 reply.status(401)
@@ -48,8 +45,7 @@ export const createUser = (
         .then((res) => {
             if (res) reply.status(200)
                 .send({ token: server.jwt.sign({
-                    payload: {uuid: res},
-                    user: request.body as NewUserParams
+                    payload: {uuid: res}
                 }) })
             else
                 reply.status(401)
