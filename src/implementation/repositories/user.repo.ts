@@ -17,7 +17,7 @@ export class UserRepository implements IUserRepository {
             password: generate(u.password),
             fullname: u.fullname,
             firebase: u.firebase_token,
-            citta: u.citta
+            citta: u.citta?.toUpperCase()
         })
         .returning({
             insertedId: users.uuid
@@ -104,7 +104,7 @@ export class UserRepository implements IUserRepository {
         return db
         .update(users)
         .set({
-            citta: citta
+            citta: citta.toUpperCase()
         })
         .where(eq(users.uuid, user_id))
         .then()

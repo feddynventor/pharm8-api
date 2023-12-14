@@ -33,7 +33,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         .insert(farmacie)
         .values({
             nome: farmacia.nome,
-            citta: farmacia.citta,
+            citta: farmacia.citta.toUpperCase(),
             codice_farmacia: farmacia.codice_farmacia
         })
         .returning({
@@ -57,7 +57,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         return db
         .select()
         .from(farmacie)
-        .where(eq(farmacie.citta, citta))
+        .where(eq(farmacie.citta, citta.toUpperCase()))
         .then(res => {
             return res.map(({
                 uuid, citta, ...keep  //campi da interfaccia
@@ -65,7 +65,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         })
     }
     async farmaciaFromNome(nome: string, citta: string): Promise<FarmaciaPayload[]> {
-        return db.execute(sql`select * from ${farmacie} where ${farmacie.citta} = ${citta} AND to_tsvector(${farmacie.nome}) @@ to_tsquery('simple',${nome+":*"})`)
+        return db.execute(sql`select * from ${farmacie} where ${farmacie.citta} = ${citta.toUpperCase()} AND to_tsvector(${farmacie.nome}) @@ to_tsquery('simple',${nome+":*"})`)
         .then(res => {
             return res.rows.map(({
                 uuid, ...keep   //campi tradotti da ORM
