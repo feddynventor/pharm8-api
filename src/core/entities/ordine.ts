@@ -10,7 +10,7 @@ export enum OrderStatus {
 
 export interface Ordine {
     uuid: string;
-    farmacia: FarmaciaPayload;
+    farmacia?: FarmaciaPayload;
     prodotto: ProdottoPayload;
     utente: Omit<User, 'password'|'uuid'>;
     quantita: number;

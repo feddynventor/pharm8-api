@@ -39,13 +39,6 @@ export class OrdineRepository implements IOrdineRepository {
         .then(async farmacia_uuid => {
             return db.query.ordini.findMany({
                 with: {
-                    // farmacia: true,
-                    // prodotto: true,
-                    farmacia: {
-                        columns: {
-                            uuid: false
-                        }
-                    },
                     prodotto: {
                         columns: {
                             uuid: false
@@ -58,6 +51,9 @@ export class OrdineRepository implements IOrdineRepository {
                             citta: true
                         }
                     }
+                },
+                columns: {
+                    farmacia: false
                 },
                 where: and(
                     eq(ordini.farmacia, farmacia_uuid),
@@ -126,7 +122,7 @@ export class OrdineRepository implements IOrdineRepository {
 
             return common
             .updateGiacenza(res.farmacia.uuid, res.prodotto.uuid, res.quantita*-1)
-            .then( async (newQta)=>{
+            .then( async ()=>{
                 return db
                 .update(ordini)
                 .set({

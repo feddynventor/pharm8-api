@@ -26,7 +26,7 @@ export const ordiniRoutes = (ordineRepository: IOrdineRepository): RouteOptions[
         },
         handler: getListaOrdini(ordineRepository, "UTENTE")
     },{
-        method: 'POST',
+        method: 'PUT',
         url: '/accept',
         schema: approvaOrdineSchema,
         handler: dispatchOrdine(ordineRepository)

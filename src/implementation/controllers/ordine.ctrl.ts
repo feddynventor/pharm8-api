@@ -58,7 +58,7 @@ export const dispatchOrdine = (
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await ordineRepository
     .dispatchOrdine(
-        (request.body as ApprovaOrdineParams).uuid
+        (request.query as ApprovaOrdineParams).uuid
     ).then( () => {
         reply.code(200)
     })

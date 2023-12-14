@@ -50,5 +50,5 @@ export const approvaOrdineSchema: FastifySchema = {
     description: 'Approva un ordine',
     security: [{ Bearer: [] }],
     tags: ["ordini"],
-    body: approvaOrdineParams
+    querystring: approvaOrdineParams
 }
