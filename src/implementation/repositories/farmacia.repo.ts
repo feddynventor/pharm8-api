@@ -60,7 +60,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         .where(eq(farmacie.citta, citta))
         .then(res => {
             return res.map(({
-                uuid, ...keep  //campi da interfaccia
+                uuid, citta, ...keep  //campi da interfaccia
             })=>keep) as FarmaciaPayload[]
         })
     }
@@ -68,7 +68,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         return db.execute(sql`select * from ${farmacie} where ${farmacie.citta} = ${citta} AND to_tsvector(${farmacie.nome}) @@ to_tsquery('simple',${nome+":*"})`)
         .then(res => {
             return res.rows.map(({
-                uuid, editor, ...keep   //campi tradotti da ORM
+                uuid, ...keep   //campi tradotti da ORM
             })=>keep) as FarmaciaPayload[]
         })
     }

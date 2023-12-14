@@ -2,7 +2,7 @@ import { type RouteOptions } from 'fastify'
 
 import { IUserRepository } from '../../core/interfaces/user.iface'
 
-import { updateUser, whoami } from '../controllers/user.ctrl'
+import { updateUser, deleteUser, whoami } from '../controllers/user.ctrl'
 import { UpdateUserSchema } from '../../core/schemas/user.schema'
 
 export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => ([
@@ -21,5 +21,14 @@ export const userRoutes = (userRepository: IUserRepository): RouteOptions[] => (
     url: '/edit',
     schema: UpdateUserSchema,
     handler: updateUser(userRepository)
+  },{
+    method: 'DELETE',
+    url: '/',
+    schema: {
+      description: "Elimina utente loggato",
+      tags: ["user"],
+      security: [{ Bearer: [] }],
+    },
+    handler: deleteUser(userRepository)
   }
 ])

@@ -3,7 +3,9 @@ import { NewUserParams, UpdateUserParams, VerifyUserParams } from '../schemas/us
 
 export interface IUserRepository {
   getUser: (user_id: string) => Promise<UserPayload>
+  deleteUser: (user_id: string) => Promise<void>
   createUser: (u: NewUserParams) => Promise<string>
   verifyUser: (u: VerifyUserParams) => Promise<string>
-  updateFarmaciaPreferita: (u: string, f: UpdateUserParams) => Promise<void>
+  updateFarmaciaPreferita: (user_id: string, piva: string) => Promise<void>
+  updateCitta: (user_id: string, citta: string) => Promise<void>
 }

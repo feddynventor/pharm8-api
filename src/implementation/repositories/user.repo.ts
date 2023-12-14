@@ -16,7 +16,8 @@ export class UserRepository implements IUserRepository {
             cf: u.cf,
             password: generate(u.password),
             fullname: u.fullname,
-            firebase: u.firebase_token
+            firebase: u.firebase_token,
+            citta: u.citta
         })
         .returning({
             insertedId: users.uuid
@@ -38,6 +39,13 @@ export class UserRepository implements IUserRepository {
             },
             where: eq(users.uuid, user_id)
         }).then()
+    }
+
+    async deleteUser(user_id: string): Promise<void> {
+        return db
+        .delete(users)
+        .where(eq(users.uuid, user_id))
+        .then()
     }
 
     async verifyUser(u: VerifyUserParams): Promise<string> {
@@ -74,11 +82,11 @@ export class UserRepository implements IUserRepository {
         })
     }
 
-    async updateFarmaciaPreferita(user_id: string, f: UpdateUserParams): Promise<void> {
+    async updateFarmaciaPreferita(user_id: string, piva: string): Promise<void> {
         return db
         .select({uuid: farmacie.uuid})
         .from(farmacie)
-        .where(eq(farmacie.piva, f.farmacia_preferita))
+        .where(eq(farmacie.piva, piva))
         .then(async (res) => {
             if (res.length==0) throw new Error("Farmacia non trovata")
             else {
@@ -91,6 +99,14 @@ export class UserRepository implements IUserRepository {
                 .then()
             }
         })
-        
+    }
+    async updateCitta(user_id: string, citta: string): Promise<void> {
+        return db
+        .update(users)
+        .set({
+            citta: citta
+        })
+        .where(eq(users.uuid, user_id))
+        .then()
     }
 }

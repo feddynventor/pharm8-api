@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { UserToken } from "../../core/entities/user";
+import { User, UserToken } from "../../core/entities/user";
 
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
 import { GetFarmaciaParams, NewFarmaciaParams, SignFarmaciaParams } from "../../core/schemas/farmacia.schema";
@@ -19,7 +19,6 @@ export const newFarmacia = (
         reply.status(400).send(err)
     })
 }
-
 
 export const signFarmacia = (
     farmaciaRepository: IFarmaciaRepository
@@ -63,5 +62,21 @@ export const findFarmacia = (
             reply.status(500).send(err)
         })
     }
+}
 
+export const myCityFarmacie = (
+    farmaciaRepository: IFarmaciaRepository
+) => async function (request: FastifyRequest, reply: FastifyReply) {
+    const {citta} = request.user as User
+    if (!citta) {
+        reply.status(404).send({message: "Utente non ha citta"})
+        return
+    }
+    await farmaciaRepository
+    .farmaciaFromCitta( citta )
+    .then( res => {
+        console.log(res)
+        if (res.length==0) reply.status(404).send({message: "Nessuna farmacia nella tua citta"})
+        else reply.status(200).send(res)
+    })
 }

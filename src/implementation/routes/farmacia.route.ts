@@ -6,8 +6,8 @@ import { MagazzinoRepository } from "../repositories/magazzino.repo";
 import { getFarmaciaSchema, newFarmaciaSchema, signFarmaciaSchema } from "../../core/schemas/farmacia.schema";
 import { updateGiacenzaSchema } from "../../core/schemas/magazzino.schema";
 
-import { findFarmacia, newFarmacia, signFarmacia } from "../controllers/farmacia.ctrl";
-import { updateGiacenza } from "../controllers/magazzino.ctrl";
+import { findFarmacia, myCityFarmacie, newFarmacia, signFarmacia } from "../controllers/farmacia.ctrl";
+import { listGiacenza, updateGiacenza } from "../controllers/magazzino.ctrl";
 
 export const farmaciaRoutes = (farmaciaRepository: IFarmaciaRepository, magazzinoRepository: MagazzinoRepository): RouteOptions[] => ([
     {
@@ -26,9 +26,27 @@ export const farmaciaRoutes = (farmaciaRepository: IFarmaciaRepository, magazzin
       schema: signFarmaciaSchema,
       handler: signFarmacia(farmaciaRepository)
     },{
-      method: 'GET',
+      method: 'POST',
       url: '/giacenza/:aic',
       schema: updateGiacenzaSchema,
       handler: updateGiacenza(magazzinoRepository)
+    },{
+      method: 'GET',
+      url: '/giacenza',
+      schema: {
+        description: "Ritorna giacenza personale della farmacia",
+        tags: ['magazzino'],
+        security: [{ Bearer: [] }],
+      },
+      handler: listGiacenza(magazzinoRepository)
+    },{
+      method: 'GET',
+      url: '/mycity',
+      schema: {
+        description: "Ottieni farmacie nella citta dell'utente loggato",
+        tags: ["farmacie"],
+        security: [{ Bearer: [] }]
+      },
+      handler: myCityFarmacie(farmaciaRepository)
     }
   ])

@@ -6,6 +6,7 @@ export interface User {
   password: string
   fullname: string
   cf: string
+  citta?: string
   favourite?: Farmacia
   worksIn?: Farmacia
 };

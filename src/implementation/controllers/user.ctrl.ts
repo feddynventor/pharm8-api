@@ -46,9 +46,24 @@ export const createUser = (
                 }) })
             else
                 reply.status(401)
+        }).catch(()=>{
+            reply.status(400).send({message: "Utente già registrato"})
         })
     }).catch(()=>{
         reply.status(400).send({message: "Codice fiscale non valido"})
+    })
+}
+
+export const deleteUser = (
+    userRepository: IUserRepository
+) => async function (request: FastifyRequest, reply: FastifyReply) {
+    await userRepository
+    .deleteUser( (request.user as UserToken).payload.uuid )
+    .then( () => {
+        reply.status(200)
+    })
+    .catch( err => {
+        reply.status(400).send({message: err})
     })
 }
 
@@ -56,15 +71,31 @@ export const updateUser = (
     userRepository: IUserRepository,
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
 
-    // ALTRE PROPRIETA
-    await userRepository
-        .updateFarmaciaPreferita( 
-            (request.user as UserToken).payload.uuid,
-            request.body as UpdateUserParams
-        ).then(() => {
-            reply.status(200)
-        })
-        .catch(err => {
-            reply.status(400).send(err)
-        })
+    const { citta, farmacia_preferita: piva } = request.body as UpdateUserParams
+
+    if (piva) {
+        await userRepository
+            .updateFarmaciaPreferita( 
+                (request.user as UserToken).payload.uuid,
+                piva
+            ).then(() => {
+                reply.status(200)
+            })
+            .catch(err => {
+                reply.status(400).send(err)
+            })
+    } else if (citta) {
+        await userRepository
+            .updateCitta(
+                (request.user as UserToken).payload.uuid,
+                citta
+            ).then(() => {
+                reply.status(200)
+            })
+            .catch(err => {
+                reply.status(400).send(err)
+            })
+    } else {
+        reply.status(400).send({message: "Richiesta errata"})
+    }
 }

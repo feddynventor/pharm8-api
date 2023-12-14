@@ -7,6 +7,7 @@ const newUserParams = {
         cf: { type: "string", minLength: 16, maxLength: 16 },
         password: { type: "string", minLength: 8 },
         fullname: { type: "string", minLength: 3 },
+        citta: { type: "string" },
         firebase_token: { type: "string" }
     },
     required: ["cf","password","fullname"],
@@ -39,9 +40,10 @@ export const verifyUserSchema: FastifySchema = {
 const updateUserParams = {
     type: "object",
     properties: {
-        farmacia_preferita: { type: "string", minLength: 11, maxLength: 11 }
+        farmacia_preferita: { type: "string", minLength: 11, maxLength: 11 },
+        citta: { type: "string" }
     },
-    required: ["farmacia_preferita"],
+    required: [],
 } as const;
 export type UpdateUserParams = FromSchema<typeof updateUserParams>;
 
