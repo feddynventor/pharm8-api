@@ -39,7 +39,7 @@ export type CheckDisponibilitaParams = FromSchema<typeof checkDisponibilitaParam
 
 export const checkDisponibilitaSchema: FastifySchema = {
     description: "Ritorna tutte le farmacie con disponibilita e relativa quantita",
-    tags: ['magazzino'],
+    tags: ['prodotto'],
     security: [{ Bearer: [] }],
     params: checkDisponibilitaParams
 }

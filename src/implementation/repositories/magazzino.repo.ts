@@ -3,9 +3,8 @@ import { and, eq, sql } from "drizzle-orm/sql";
 import { farmacie, magazzino } from "../../core/database/schema";
 import * as common from "./common.repo";
 
-import { FarmaciaPayload } from "../../core/entities/farmacia";
-
 import { IMagazzinoRepository } from "../../core/interfaces/magazzino.iface";
+import { Disponibilita } from "../../core/entities/disponibilita";
 
 export class MagazzinoRepository implements IMagazzinoRepository {
     async updateGiacenza(user_id: string, aic: string, differenza?: number, totale?: number): Promise<number> {        
@@ -13,71 +12,48 @@ export class MagazzinoRepository implements IMagazzinoRepository {
         .then(async farmacia_uuid => {
             return common.getFarmacoFromAIC(aic)       // aic identifica il prodotto da aggiornare, UUID la relativa chiave esterna
             .then(async farmaco_uuid => {
-                return db.transaction( async (tx) => {
-                    return tx
-                    .update(magazzino)
-                    .set({ quantita: (!!differenza) ? sql`${magazzino.quantita} + ${differenza}` : sql`${totale}` })
-                    .where(and(
-                        eq(magazzino.farmacia, farmacia_uuid),
-                        eq(magazzino.prodotto, farmaco_uuid)
-                    ))
-                    .returning({
-                        newQta: magazzino.quantita
-                    })
-                    .then( async res => {
-                        if (res.length==0) {    //no record to update
-                            await db
-                            .insert(magazzino)
-                            .values({
-                                farmacia: farmacia_uuid,
-                                prodotto: farmaco_uuid,
-                                quantita: (!!differenza) ? sql`${magazzino.quantita} + ${differenza}` : sql`${totale}`
-                            })
-                            .returning({
-                                newQta: magazzino.quantita
-                            })
-                            .then( res =>{
-                                return res[0].newQta
-                            })
-                        } else if (res[0].newQta < 0) {
-                            // tx.rollback()
-                            throw new Error(
-                                "Disponibilita in magazzino non sufficiente per "
-                                +(res[0].newQta*-1)+" unita"
-                                )  //`throw` triggers Rollback
-                        } else {    //update OK
-                            return res[0].newQta
-                        }
-                    })
-                    .catch( err => {
-                        if (err.code == "42P01") throw new Error("Prodotto non presente in magazzino")  //increment macro fallisce
-                        else throw new Error(err)
-                    })
-                }).then()  //transaction AS a promise
+                
+                return common.updateGiacenza(farmacia_uuid, farmaco_uuid, differenza, totale)
 
             })
         })
     }
 
-    async checkDisponibilita(aic: string): Promise<{f: FarmaciaPayload, qt: number}[]> {
+    async listGiacenza(farmacia_uuid: string): Promise<Disponibilita[]> {
+        return db.query.magazzino.findMany({
+            with: {
+                prodotto: true
+            },
+            columns: {
+                uuid: false,
+                farmacia: false
+            },
+            where: eq(magazzino.farmacia, farmacia_uuid)
+            }
+        ).then( (res) => {
+            if (res.length == 0) throw new Error("Nessun prodotto in magazzino")
+            else return res
+        })
+    }
+
+    async checkDisponibilita(aic: string): Promise<Disponibilita[]> {
         return common.getFarmacoFromAIC(aic)
         .then( async farmaco_uuid => {
-            return db
-            .select()
-            .from(magazzino)
-            .where(eq(magazzino.prodotto, farmaco_uuid))
-            .innerJoin(farmacie, eq(magazzino.farmacia, farmacie.uuid))
-            .then( res => {
-
+            return db.query.magazzino.findMany({
+                with: {
+                    farmacia: true,
+                    prodotto: true
+                },
+                columns: {
+                    uuid: false
+                },
+                where: and(
+                    eq(magazzino.prodotto, farmaco_uuid),
+                    sql`magazzino.quantita > 0`
+                )
+            }).then( res => {
                 if (res.length == 0) throw new Error("Nessuna farmacia con prodotto disponibile")
-
-                return res.map( f => {
-                    const { uuid, ...rest } = f.farmacie
-                    return {
-                        f: rest,
-                        qt: f.magazzino.quantita
-                    }
-                })
+                else return res  
             })
         })
     }

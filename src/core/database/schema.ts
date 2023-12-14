@@ -8,6 +8,7 @@ export const users = pgTable(
         cf: varchar("cod_fiscale", {length: 16}).unique(),
         password: varchar("password", {length: 56}).notNull(),
         fullname: varchar("full_name", {length: 256}),
+        citta: varchar("citta", {length: 128}),
         firebase: varchar("firebase_token", {length: 163}),
         favourite: uuid("farmacia_preferita").references(()=>farmacie.uuid),
         worksIn: uuid("dipendente_farmacia").references(()=>farmacie.uuid)
@@ -52,23 +53,34 @@ export const prodotti = pgTable(
 export const magazzino = pgTable(
     "magazzino", {
         uuid: uuid('uuid').primaryKey().default(sql`gen_random_uuid()`),
-        farmacia: uuid('farmacia').notNull().references(()=>farmacie.uuid),
+        farmacia: uuid('farmacia').notNull().references(()=>farmacie.uuid, {onDelete: 'cascade'}),
         prodotto: uuid('prodotto').notNull().references(()=>prodotti.uuid),
         quantita: real('quantita').notNull().default(0),
     }, (table) => ({
         index: index("farmacia_prodotto_idx").on(table.farmacia, table.prodotto)
     })
 )
+export const magazzinoRelations = relations(magazzino, ({ one,many })=>({
+    farmacia: one(farmacie, {
+        fields: [magazzino.farmacia],
+        references: [farmacie.uuid]
+    }),
+    prodotto: one(prodotti, {
+        fields: [magazzino.prodotto],
+        references: [prodotti.uuid]
+    })
+}))
 
 export const orderStatus = pgEnum('status', ['PENDING','ACCEPTED','DELIVERED']);
 export const ordini = pgTable(
     "ordini", {
         uuid: uuid('uuid').primaryKey().default(sql`gen_random_uuid()`),
         farmacia: uuid('farmacia').notNull().references(()=>farmacie.uuid),
-        utente: uuid('utente').notNull().references(()=>users.uuid),
+        utente: uuid('utente').notNull().references(()=>users.uuid, {onDelete: 'cascade'}),
         prodotto: uuid('prodotto').notNull().references(()=>prodotti.uuid),
         quantita: real('quantita').notNull().default(1),
         date: timestamp('timestamp', { withTimezone: true }).notNull().default(sql`now()`),
+        aggiornato: timestamp('new_timestamp', { withTimezone: true }),
         status: orderStatus('status').notNull().default('PENDING')
     }, (table) => ({
         index: index("order_idx").on(table.farmacia, table.date)
