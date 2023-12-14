@@ -6,7 +6,8 @@ const newFarmaciaParams = {
     properties: {
         nome: { type: "string", minLength: 3 },
         citta: { type: "string", minLength: 2 },
-        codice_farmacia: { type: "string", minLength: 11, maxLength: 11 }
+        codice_farmacia: { type: "string", minLength: 11, maxLength: 11 },
+        indirizzo: { type: "string" },
     },
     required: ["citta","nome","codice_farmacia"],
 } as const;
