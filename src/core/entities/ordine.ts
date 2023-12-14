@@ -1,5 +1,5 @@
 import { FarmaciaPayload } from "./farmacia";
-import { Prodotto, ProdottoPayload } from "./prodotto";
+import { ProdottoPayload } from "./prodotto";
 import { User } from "./user";
 
 export enum OrderStatus {
@@ -19,3 +19,4 @@ export interface Ordine {
 }
 
 export type OrdinePayload = Omit<Ordine, 'uuid'>;
+export type OrdineUtente = Omit<Ordine, 'utente'>

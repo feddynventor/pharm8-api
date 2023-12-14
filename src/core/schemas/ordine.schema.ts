@@ -31,8 +31,24 @@ const getListaOrdiniParams = {
 export type GetListaOrdiniParams = FromSchema<typeof getListaOrdiniParams>;
 
 export const getListaOrdiniSchema: FastifySchema = {
-    description: '',
-    tags: ['ordini','farmacia'],
+    description: 'Restituisce la lista degli ordini in carico alla farmacia in gestione',
     security: [{ Bearer: [] }],
     querystring: getListaOrdiniParams
+}
+
+
+const approvaOrdineParams = {
+    type: "object",
+    properties: {
+        uuid: { type: "string", minLength: 36, maxLength: 36 }
+    },
+    required: ["uuid"]
+} as const;
+export type ApprovaOrdineParams = FromSchema<typeof approvaOrdineParams>;
+
+export const approvaOrdineSchema: FastifySchema = {
+    description: 'Approva un ordine',
+    security: [{ Bearer: [] }],
+    tags: ["ordini"],
+    body: approvaOrdineParams
 }
