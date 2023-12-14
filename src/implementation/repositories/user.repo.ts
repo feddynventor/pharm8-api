@@ -7,7 +7,6 @@ import { farmacie, users } from "../../core/database/schema";
 import { eq } from "drizzle-orm";
 import { generate, verify } from "password-hash";
 import { NewUserParams, UpdateUserParams, VerifyUserParams } from "../../core/schemas/user.schema";
-import { capitalizeWords } from "../helpers/tools";
 
 export class UserRepository implements IUserRepository {
     async createUser(u: NewUserParams): Promise<string> {
@@ -18,7 +17,7 @@ export class UserRepository implements IUserRepository {
             password: generate(u.password),
             fullname: u.fullname,
             firebase: u.firebase_token,
-            citta: capitalizeWords(u.citta)
+            citta: u.citta
         })
         .returning({
             insertedId: users.uuid
@@ -105,7 +104,7 @@ export class UserRepository implements IUserRepository {
         return db
         .update(users)
         .set({
-            citta: capitalizeWords(citta)
+            citta: citta
         })
         .where(eq(users.uuid, user_id))
         .then()

@@ -6,7 +6,6 @@ import { farmacie, users } from "../../core/database/schema";
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
 import { NewFarmaciaParams, SignFarmaciaParams } from "../../core/schemas/farmacia.schema";
 import { FarmaciaPayload } from "../../core/entities/farmacia";
-import { capitalizeWords } from "../helpers/tools";
 
 export class FarmaciaRepository implements IFarmaciaRepository {
     async signFarmacia(user_id: string, utente: SignFarmaciaParams): Promise<void> {
@@ -34,7 +33,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         .insert(farmacie)
         .values({
             nome: farmacia.nome,
-            citta: capitalizeWords(farmacia.citta),
+            citta: farmacia.citta,
             codice_farmacia: farmacia.codice_farmacia
         })
         .returning({
@@ -58,7 +57,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         return db
         .select()
         .from(farmacie)
-        .where(eq(farmacie.citta, capitalizeWords(citta)))
+        .where(eq(farmacie.citta, citta))
         .then(res => {
             return res.map(({
                 uuid, citta, ...keep  //campi da interfaccia
@@ -66,7 +65,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         })
     }
     async farmaciaFromNome(nome: string, citta: string): Promise<FarmaciaPayload[]> {
-        return db.execute(sql`select * from ${farmacie} where ${farmacie.citta} = ${capitalizeWords(citta)} AND to_tsvector(${farmacie.nome}) @@ to_tsquery('simple',${nome+":*"})`)
+        return db.execute(sql`select * from ${farmacie} where ${farmacie.citta} = ${citta} AND to_tsvector(${farmacie.nome}) @@ to_tsquery('simple',${nome+":*"})`)
         .then(res => {
             return res.rows.map(({
                 uuid, ...keep   //campi tradotti da ORM
