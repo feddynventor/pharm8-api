@@ -32,9 +32,9 @@ export const farmacie = pgTable(
         uuid: uuid('uuid').primaryKey().default(sql`gen_random_uuid()`),
         nome: varchar('ragione_sociale').notNull(),
         citta: varchar('citta').notNull(),
-        piva: varchar('partita_iva', {length: 11}).unique().notNull(),
+        codice_farmacia: varchar('codice_farmacia', {length: 11}).unique().notNull(),
     }, (table) => ({
-        index: index("piva_idx").on(table.uuid, table.citta, table.piva)
+        index: index("farmacie_idx").on(table.uuid, table.citta, table.codice_farmacia)
     })
 )
 

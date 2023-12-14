@@ -6,6 +6,6 @@ export interface IUserRepository {
   deleteUser: (user_id: string) => Promise<void>
   createUser: (u: NewUserParams) => Promise<string>
   verifyUser: (u: VerifyUserParams) => Promise<string>
-  updateFarmaciaPreferita: (user_id: string, piva: string) => Promise<void>
+  updateFarmaciaPreferita: (user_id: string, codice_farmacia: string) => Promise<void>
   updateCitta: (user_id: string, citta: string) => Promise<void>
 }

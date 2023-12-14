@@ -13,11 +13,11 @@ export const getFarmaciaFromEditor = async (user_id: string): Promise<string> =>
         else return res[0].farmacia_uuid
     })
 }
-export const getFarmaciaFromPIVA = async (piva: string): Promise<string> => {
+export const getFarmaciaFromCodice = async (codice_farmacia: string): Promise<string> => {
     return db
     .select({farmacia_uuid: farmacie.uuid})
     .from(farmacie)
-    .where(eq(farmacie.piva, piva))
+    .where(eq(farmacie.codice_farmacia, codice_farmacia))
     .then(res => {
         if (res.length==0 || !res[0].farmacia_uuid) throw new Error("Farmacia inesistente")
         else return res[0].farmacia_uuid

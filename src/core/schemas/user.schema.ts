@@ -49,7 +49,7 @@ export type UpdateUserParams = FromSchema<typeof updateUserParams>;
 
 export const UpdateUserSchema: FastifySchema = {
     description: `Aggiorna dati utente:
-        Farmacia preferita con la Partita IVA corrispondente`,
+        Farmacia preferita con il codice farmacia corrispondente`,
     tags: ['user'],
     security: [{ Bearer: [] }],
     body: updateUserParams

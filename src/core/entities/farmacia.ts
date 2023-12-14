@@ -2,7 +2,7 @@ export interface Farmacia {
     uuid: string
     nome: string
     citta: string
-    piva: string
+    codice_farmacia: string
 }
 export type FarmaciaPayload = Omit<Farmacia, 'uuid'>
 

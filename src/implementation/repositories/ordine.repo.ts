@@ -9,10 +9,10 @@ import { sendNotification } from "../../firebase";
 import { MagazzinoRepository } from "./magazzino.repo";
 
 export class OrdineRepository implements IOrdineRepository {
-    async newOrdine(user_id: string, piva: string, aic: string, qt_richiesta: number): Promise<void> {
+    async newOrdine(user_id: string, codice_farmacia: string, aic: string, qt_richiesta: number): Promise<void> {
         return MagazzinoRepository.prototype.checkDisponibilita(aic)
         .then( async res => {
-            const disponibilita = res.filter( d => d.farmacia?.piva == piva)
+            const disponibilita = res.filter( d => d.farmacia?.codice_farmacia == codice_farmacia)
             if (disponibilita.length == 0) 
                 throw new Error("La farmacia selezionata non ha questo prodotto disponibile")
             

@@ -6,9 +6,9 @@ const newFarmaciaParams = {
     properties: {
         nome: { type: "string", minLength: 3 },
         citta: { type: "string", minLength: 2 },
-        piva: { type: "string", minLength: 11, maxLength: 11 }
+        codice_farmacia: { type: "string", minLength: 11, maxLength: 11 }
     },
-    required: ["citta","nome","piva"],
+    required: ["citta","nome","codice_farmacia"],
 } as const;
 export type NewFarmaciaParams = FromSchema<typeof newFarmaciaParams>
 

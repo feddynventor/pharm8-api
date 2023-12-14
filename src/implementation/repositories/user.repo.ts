@@ -82,11 +82,11 @@ export class UserRepository implements IUserRepository {
         })
     }
 
-    async updateFarmaciaPreferita(user_id: string, piva: string): Promise<void> {
+    async updateFarmaciaPreferita(user_id: string, codice_farmacia: string): Promise<void> {
         return db
         .select({uuid: farmacie.uuid})
         .from(farmacie)
-        .where(eq(farmacie.piva, piva))
+        .where(eq(farmacie.codice_farmacia, codice_farmacia))
         .then(async (res) => {
             if (res.length==0) throw new Error("Farmacia non trovata")
             else {
