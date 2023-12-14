@@ -6,7 +6,7 @@ export const sendNotification = async (body: string, token: string): Promise<voi
 // export const sendNotification = async (notification: {body: string, title: string}, token: string): Promise<void> =>{
     return getMessaging(
         initializeApp({
-            credential: credential.cert(__dirname+"/firebase-adminsdk.json")
+            credential: credential.cert(process.env.APP_ROOT+"/firebase-adminsdk.json")
         })
     ).send({
         notification: {

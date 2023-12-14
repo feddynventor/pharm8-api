@@ -2,6 +2,8 @@ import { createServer } from "./src/implementation/server";
 import dotenv from 'dotenv'; 
 dotenv.config();  // Load environment variables from .env file 
 
+process.env['APP_ROOT'] = __dirname;
+
 (async ()=>{
     console.log({
         port: process.env.API_PORT,
