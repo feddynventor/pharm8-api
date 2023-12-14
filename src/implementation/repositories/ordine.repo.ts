@@ -115,7 +115,10 @@ export class OrdineRepository implements IOrdineRepository {
                     }
                 }
             },
-            where: eq(ordini.uuid, order_id)
+            where: and(
+                eq(ordini.uuid, order_id),
+                eq(ordini.status, OrderStatus.PENDING)
+            )
         })
         .then(async res => {
             if (!res) throw new Error("Ordine non trovato!")
