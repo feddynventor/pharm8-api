@@ -34,8 +34,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         .values({
             nome: farmacia.nome,
             citta: farmacia.citta.toUpperCase(),
-            codice_farmacia: farmacia.codice_farmacia,
-            indirizzo: farmacia.indirizzo
+            codice_farmacia: farmacia.codice_farmacia
         })
         .returning({
             insertedId: farmacie.uuid
