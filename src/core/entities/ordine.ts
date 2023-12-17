@@ -1,6 +1,6 @@
 import { FarmaciaPayload } from "./farmacia";
 import { ProdottoPayload } from "./prodotto";
-import { User } from "./user";
+import { UserPayload } from "./user";
 
 export enum OrderStatus {
     PENDING = 'PENDING',
@@ -12,7 +12,7 @@ export interface Ordine {
     uuid: string;
     farmacia?: FarmaciaPayload;
     prodotto: ProdottoPayload;
-    utente: Omit<User, 'password'|'uuid'>;
+    utente: UserPayload;
     quantita: number;
     date: Date;
     status: OrderStatus;

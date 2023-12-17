@@ -14,7 +14,7 @@ import { FarmaciaRepository } from './repositories/farmacia.repo'
 import { ProdottoRepository } from './repositories/prodotto.repo'
 import { MagazzinoRepository } from './repositories/magazzino.repo'
 import { OrdineRepository } from './repositories/ordine.repo'
-import { UserToken } from '../core/entities/user'
+import { User, UserToken } from '../core/entities/user'
 
 export const createServer = async (basePath: string): Promise<FastifyInstance> => {
 
@@ -40,16 +40,16 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
 
       request.jwtVerify()
       .then((jwt)=>{
-        return (jwt as UserToken).payload.uuid
+        if ((jwt as UserToken).iat < Date.now()/1000-3600) throw new Error("Token scaduto")
+        else return (jwt as UserToken).payload.uuid
       })
       .then( userRepository.getUser )
       .then((res)=>{
-        const { uuid, ...user } = res
-        Object.assign(request.user, user)
+        (request.user as UserToken).user = new User(res)
         next()
       })
       .catch(err => {
-        reply.status(401).send({message: "Token non valido"})
+        reply.status(401).send({message: err.toString()})
       })
     })
   

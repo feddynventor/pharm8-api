@@ -4,6 +4,7 @@ import { User, UserToken } from "../../core/entities/user"
 import { IMagazzinoRepository } from "../../core/interfaces/magazzino.iface"
 
 import { CheckDisponibilitaParams, UpdateGiacenzaParams, UpdateGiacenzaQuery } from "../../core/schemas/magazzino.schema"
+import { getFarmaciaFromEditor } from "../repositories/common.repo"
 
 export const updateGiacenza = (
     magazzinoRepository: IMagazzinoRepository
@@ -40,14 +41,13 @@ export const checkDisponibilita = (
 export const listGiacenza = (
     magazzinoRepository: IMagazzinoRepository
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
-    const farmacia_uuid = (request.user as User).worksIn?.uuid
-    if (!farmacia_uuid) {
+    if (!(request.user as User).worksIn) {
         reply.status(403).send("Utente non autorizzato")
         return
     }
-
-    await magazzinoRepository
-    .listGiacenza( farmacia_uuid )
+    await getFarmaciaFromEditor( 
+        (request.user as UserToken).payload.uuid as string )
+    .then(magazzinoRepository.listGiacenza)
     .then( res => {
         reply.status(200).send(res)
     })

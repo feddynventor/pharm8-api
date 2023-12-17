@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify"
 
-import { User, UserToken } from "../../core/entities/user"
+import { User, UserPayload, UserToken } from "../../core/entities/user"
 
 import { IUserRepository } from "../../core/interfaces/user.iface"
 
@@ -28,7 +28,7 @@ export const verifyUser = (
 
 export const whoami = 
 () => async function (request: FastifyRequest, reply: FastifyReply) {
-    reply.status(200).send({ ip: request.socket.remoteAddress, user: request.user as User})
+    reply.status(200).send((request.user as UserToken).user as UserPayload)
 }
 
 export const createUser = (
@@ -63,7 +63,7 @@ export const deleteUser = (
         reply.status(200)
     })
     .catch( err => {
-        reply.status(400).send({message: err})
+        reply.status(400).send({message: err.toString()})
     })
 }
 

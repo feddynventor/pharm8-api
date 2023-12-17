@@ -31,11 +31,21 @@ export class UserRepository implements IUserRepository {
         // si conosce uuid da token jwt
         return db.query.users.findFirst({
             with: {
-                favourite: true,
-                worksIn: true
+                favourite: {
+                    columns: {
+                        uuid: false,
+                    }
+                },
+                worksIn: {
+                    columns: {
+                        uuid: false,
+                    }
+                }
             },
             columns: {
-                password: false
+                password: false,
+                firebase: false,
+                uuid: false
             },
             where: eq(users.uuid, user_id)
         }).then()
@@ -75,10 +85,6 @@ export class UserRepository implements IUserRepository {
         .then( res => {
             if (res[0].uuid) return res[0].uuid
             else throw new Error("Utente inesistente")
-        })
-        .then( this.getUser )
-        .then( user => {
-            return user.uuid
         })
     }
 

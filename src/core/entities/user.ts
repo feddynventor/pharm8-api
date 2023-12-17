@@ -1,23 +1,26 @@
-import { Farmacia } from "./farmacia"
+import { Farmacia, FarmaciaPayload } from "./farmacia"
 
 export interface User {
   uuid: string
-  // firebase: string
+  firebase: string
   password: string
   fullname: string
   cf: string
   citta?: string
-  favourite?: Farmacia
-  worksIn?: Farmacia
+  favourite?: FarmaciaPayload
+  worksIn?: FarmaciaPayload
 };
 
-export type UserPayload = Omit<User, 'password'>
+export type UserPayload = Omit<User, 'uuid'|'password'|'firebase'>
 
 export interface UserToken {
   payload: {uuid: string},
-  user: User,
+  user: UserPayload,
   iat: number
 }
 
 export class User implements User {
+  constructor(obj: UserPayload){
+    Object.assign(this, obj)
+  }
 }
