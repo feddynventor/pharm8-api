@@ -45,6 +45,7 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
       })
       .then( userRepository.getUser )
       .then((res)=>{
+        if (!res) throw new Error("Utente non trovato");
         (request.user as UserToken).user = new User(res)
         next()
       })
