@@ -36,10 +36,19 @@ const checkDisponibilitaParams = {
     required: ['aic'],
 } as const;
 export type CheckDisponibilitaParams = FromSchema<typeof checkDisponibilitaParams>;
+const checkDisponibilitaQuery = {
+    type: 'object',
+    properties: {
+        tutte: { type: 'string' }
+    },
+    required: [],
+} as const;
+export type CheckDisponibilitaQuery = FromSchema<typeof checkDisponibilitaQuery>;
 
 export const checkDisponibilitaSchema: FastifySchema = {
     description: "Ritorna tutte le farmacie con disponibilita e relativa quantita",
     tags: ['prodotto'],
     security: [{ Bearer: [] }],
+    querystring: checkDisponibilitaQuery,
     params: checkDisponibilitaParams
 }

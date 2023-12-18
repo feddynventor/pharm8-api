@@ -1,6 +1,6 @@
 import { db } from "../../core/database/connect";
 import { and, eq, sql } from "drizzle-orm/sql";
-import { farmacie, magazzino } from "../../core/database/schema";
+import { magazzino } from "../../core/database/schema";
 import * as common from "./common.repo";
 
 import { IMagazzinoRepository } from "../../core/interfaces/magazzino.iface";
@@ -41,11 +41,15 @@ export class MagazzinoRepository implements IMagazzinoRepository {
         .then( async farmaco_uuid => {
             return db.query.magazzino.findMany({
                 with: {
-                    farmacia: true,
-                    prodotto: true
+                    farmacia: {
+                        columns: {
+                            uuid: false
+                        }
+                    }
                 },
                 columns: {
-                    uuid: false
+                    uuid: false,
+                    prodotto: false
                 },
                 where: and(
                     eq(magazzino.prodotto, farmaco_uuid),
@@ -53,7 +57,7 @@ export class MagazzinoRepository implements IMagazzinoRepository {
                 )
             }).then( res => {
                 if (res.length == 0) throw new Error("Nessuna farmacia con prodotto disponibile")
-                else return res  
+                else return res
             })
         })
     }

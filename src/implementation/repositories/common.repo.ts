@@ -68,12 +68,13 @@ export const updateGiacenza = async (farmacia_uuid: string, farmaco_uuid: string
                     }
                 })
             } else {
+                if (differenza && differenza<0) throw new Error("Prodotto non ancora presente in magazzino. Valore invalido.")
                 return tx
                 .insert(magazzino)
                 .values({
                     farmacia: farmacia_uuid,
                     prodotto: farmaco_uuid,
-                    quantita: (!!differenza) ? sql`${magazzino.quantita} + ${differenza}` : sql`${totale}`
+                    quantita: (!!differenza) ? sql`${differenza}` : sql`${totale}`
                 })
                 .returning({
                     newQta: magazzino.quantita

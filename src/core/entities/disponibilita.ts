@@ -1,8 +1,8 @@
-import { Farmacia } from "./farmacia";
-import { Prodotto } from "./prodotto";
+import { FarmaciaPayload } from "./farmacia";
+import { ProdottoPayload } from "./prodotto";
 
 export interface Disponibilita {
-    farmacia?: Farmacia,
-    prodotto: Prodotto,
+    farmacia?: FarmaciaPayload,
+    prodotto?: ProdottoPayload,
     quantita: number
 }

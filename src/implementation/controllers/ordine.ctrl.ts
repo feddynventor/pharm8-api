@@ -26,7 +26,7 @@ export const getListaOrdini = (
     tipo: "UTENTE"|"FARMACIA"
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     if (tipo=="FARMACIA") {
-        if (!(request.user as User).worksIn) reply.status(403).send("Utente non autorizzato")
+        if (!(request.user as UserToken).user.worksIn) reply.status(403).send({message: "Utente non autorizzato"})
         await ordineRepository
         .getListaOrdini(
             (request.user as UserToken).payload.uuid,   //gestore Farmacia
