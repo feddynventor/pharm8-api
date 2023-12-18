@@ -1,4 +1,4 @@
 node_modules/
 dist/
 migrations/
-firebase-adminsdk.json
+credentials/

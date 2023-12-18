@@ -2,3 +2,4 @@ node_modules
 dist
 migrations
 [Dd]ocker*(file|.yml)
+credentials/

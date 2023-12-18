@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    working_dir: /usr/share/app
+    volumes:
+      - ${PWD}/credentials:/usr/share/app/credentials/
     ports:
       - 127.0.0.1:8989:80
     links:
@@ -22,16 +25,16 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
 
-  # pgadmin:
-  #   container_name: fastify-pgadmin
-  #   image: dpage/pgadmin4
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
-  #     PGADMIN_DEFAULT_PASSWORD: password
-  #   ports:
-  #     - 5000:80
-  #   volumes:
-  #     - pgadmin_data:/var/lib/pgadmin
+  pgadmin:
+    container_name: fastify-pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: divertiti@feddynventor.ddns.net
+      PGADMIN_DEFAULT_PASSWORD: cicciopasticcio
+    ports:
+      - 5000:80
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 
 volumes:
   pg_data:
