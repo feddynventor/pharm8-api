@@ -66,3 +66,17 @@ export const dispatchOrdine = (
         reply.status(400).send(err)
     })
 }
+
+export const deliverOrdine = (
+    ordineRepository: IOrdineRepository
+) => async function (request: FastifyRequest, reply: FastifyReply) {
+    await ordineRepository
+    .deliverOrdine(
+        (request.query as ApprovaOrdineParams).uuid
+    ).then( () => {
+        reply.code(200)
+    })
+    .catch(err => {
+        reply.status(400).send(err)
+    })
+}

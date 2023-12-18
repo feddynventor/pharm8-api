@@ -1,7 +1,7 @@
 import { RouteOptions } from "fastify";
 import { IOrdineRepository } from "../../core/interfaces/ordine.iface";
 import { getListaOrdiniSchema, newOrdineSchema, approvaOrdineSchema } from "../../core/schemas/ordine.schema";
-import { dispatchOrdine, getListaOrdini, newOrdine } from "../controllers/ordine.ctrl";
+import { dispatchOrdine, getListaOrdini, newOrdine, deliverOrdine } from "../controllers/ordine.ctrl";
 
 export const ordiniRoutes = (ordineRepository: IOrdineRepository): RouteOptions[] => ([
     {
@@ -28,7 +28,12 @@ export const ordiniRoutes = (ordineRepository: IOrdineRepository): RouteOptions[
     },{
         method: 'PUT',
         url: '/accept',
-        schema: approvaOrdineSchema,
+        schema: { description: "Accetta un ordine [ACCEPTED] e scala dalla giacenza", ...approvaOrdineSchema},
         handler: dispatchOrdine(ordineRepository)
+    },{
+        method: 'PUT',
+        url: '/sell',
+        schema: { description: "Contrassegna ordine come [DELIVER]ed", ...approvaOrdineSchema},
+        handler: deliverOrdine(ordineRepository)
     }
 ])

@@ -47,7 +47,6 @@ const approvaOrdineParams = {
 export type ApprovaOrdineParams = FromSchema<typeof approvaOrdineParams>;
 
 export const approvaOrdineSchema: FastifySchema = {
-    description: 'Approva un ordine',
     security: [{ Bearer: [] }],
     tags: ["ordini"],
     querystring: approvaOrdineParams

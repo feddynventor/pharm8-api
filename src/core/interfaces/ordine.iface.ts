@@ -5,4 +5,5 @@ export interface IOrdineRepository {
     getListaOrdini: (user_id: string, status: OrderStatus) => Promise<Ordine[] | void[]>        //user_id belongs to gestore farmacia
     getOrdiniUtente: (user_id: string, status: OrderStatus) => Promise<OrdineUtente[] | void[]> //user_id belongs to utente
     dispatchOrdine: (order_id: string) => Promise<void>
+    deliverOrdine: (order_id: string) => Promise<void>
 }

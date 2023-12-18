@@ -1,12 +1,14 @@
 import { and, eq, sql } from "drizzle-orm/sql";
 import { db } from "../../core/database/connect";
+import { farmacie, ordini, prodotti } from "../../core/database/schema";
+
 import { IOrdineRepository } from "../../core/interfaces/ordine.iface";
-import { ordini } from "../../core/database/schema";
+import { MagazzinoRepository } from "./magazzino.repo";
 
 import * as common from "./common.repo";
 import { OrderStatus, Ordine, OrdineUtente } from "../../core/entities/ordine";
+
 import { sendNotification } from "../../firebase";
-import { MagazzinoRepository } from "./magazzino.repo";
 
 export class OrdineRepository implements IOrdineRepository {
     async newOrdine(user_id: string, codice_farmacia: string, aic: string, qt_richiesta: number): Promise<void> {
@@ -19,15 +21,24 @@ export class OrdineRepository implements IOrdineRepository {
             const {prodotto, quantita, farmacia} = disponibilita[0]
             if (quantita < qt_richiesta) 
                 throw new Error("Quantità richiesta non disponibile dalla farmacia selezionata")
+            
             if (!farmacia) return;
             
-            console.log(res)
+            const {uuid: prodotto_uuid} = await db.query.prodotti.findFirst({
+                where: eq(prodotti.aic, aic)
+            }) || {}
+            const {uuid: farmacia_uuid} = await db.query.farmacie.findFirst({
+                where: eq(farmacie.codice_farmacia, codice_farmacia)
+            }) || {}
+
+            if (!farmacia_uuid || !prodotto_uuid) return;
+            
             return db
             .insert(ordini)
             .values({
-                farmacia: farmacia.uuid,
+                farmacia: farmacia_uuid,
+                prodotto: prodotto_uuid,
                 utente: user_id,
-                prodotto: prodotto.uuid,
                 quantita: qt_richiesta
             })
             .then()
@@ -143,6 +154,51 @@ export class OrdineRepository implements IOrdineRepository {
             })
             
             
+        })
+    }
+
+    async deliverOrdine(order_id: string): Promise<void> {
+        return db.query.ordini.findFirst({
+            with: {
+                farmacia: {
+                    columns: {
+                        uuid: true
+                    }
+                },
+                prodotto: {
+                    columns: {
+                        uuid: true,
+                        nome: true
+                    }
+                },
+                utente: {
+                    columns: {
+                        firebase: true
+                    }
+                }
+            },
+            where: and(
+                eq(ordini.uuid, order_id),
+                eq(ordini.status, OrderStatus.ACCEPTED)
+            )
+        })
+        .then(async res => {
+            if (!res) throw new Error("Ordine non trovato!")
+
+            return db
+            .update(ordini)
+            .set({
+                status: OrderStatus.DELIVERED,
+                aggiornato: sql`now()`
+            })
+            .where(eq(ordini.uuid, order_id))
+            .then( async ()=>{
+                if (!res.utente.firebase) return
+                await sendNotification(
+                    "Hai ritirato "+res.quantita+"x "+res.prodotto.nome,
+                    res.utente.firebase
+                )
+            })
         })
     }
 }
