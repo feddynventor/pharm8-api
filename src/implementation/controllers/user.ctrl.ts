@@ -58,7 +58,9 @@ export const deleteUser = (
     userRepository: IUserRepository
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
     await userRepository
-    .deleteUser( (request.user as UserToken).payload.uuid )
+    .deleteUser( 
+        (request.user as UserToken).payload.uuid,
+        (request.user as UserToken).user.worksIn?.codice_farmacia )
     .then( () => {
         reply.status(200)
     })
