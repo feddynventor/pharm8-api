@@ -6,7 +6,7 @@ export interface User {
   password: string
   fullname: string
   cf: string
-  citta?: string
+  citta: string
   favourite?: FarmaciaPayload
   worksIn?: FarmaciaPayload
 };

@@ -10,7 +10,7 @@ const newUserParams = {
         citta: { type: "string" },
         firebase_token: { type: "string" }
     },
-    required: ["cf","password","fullname"],
+    required: ["cf","password","fullname","citta"],
 } as const;
 export type NewUserParams = FromSchema<typeof newUserParams>
 
@@ -40,7 +40,7 @@ export const verifyUserSchema: FastifySchema = {
 const updateUserParams = {
     type: "object",
     properties: {
-        farmacia_preferita: { type: "string", minLength: 11, maxLength: 11 },
+        farmacia_preferita: { type: "string" },
         citta: { type: "string" }
     },
     required: [],

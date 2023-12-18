@@ -67,6 +67,20 @@ export const deleteUser = (
     })
 }
 
+export const removeFarmaciaPreferita = (
+    userRepository: IUserRepository
+) => async function (request: FastifyRequest, reply: FastifyReply) {
+    await userRepository
+    .removeFarmaciaPreferita( 
+        (request.user as UserToken).payload.uuid
+    ).then(() => {
+        reply.status(200)
+    })
+    .catch(err => {
+        reply.status(400).send(err)
+    })
+}
+
 export const updateUser = (
     userRepository: IUserRepository,
 ) => async function (request: FastifyRequest, reply: FastifyReply) {

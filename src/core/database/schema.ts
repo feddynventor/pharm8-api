@@ -8,7 +8,7 @@ export const users = pgTable(
         cf: varchar("cod_fiscale", {length: 16}).unique(),
         password: varchar("password", {length: 56}).notNull(),
         fullname: varchar("full_name", {length: 256}),
-        citta: varchar("citta", {length: 128}),
+        citta: varchar("citta", {length: 128}).notNull(),
         firebase: varchar("firebase_token", {length: 163}),
         favourite: uuid("farmacia_preferita").references(()=>farmacie.uuid),
         worksIn: uuid("dipendente_farmacia").references(()=>farmacie.uuid)

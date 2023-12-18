@@ -17,7 +17,7 @@ export class UserRepository implements IUserRepository {
             password: generate(u.password),
             fullname: u.fullname,
             firebase: u.firebase_token,
-            citta: u.citta?.toUpperCase()
+            citta: u.citta.toUpperCase()
         })
         .returning({
             insertedId: users.uuid
@@ -105,6 +105,15 @@ export class UserRepository implements IUserRepository {
                 .then()
             }
         })
+    }
+    async removeFarmaciaPreferita(user_id: string): Promise<void> {
+        return db
+        .update(users)
+        .set({
+            favourite: null
+        })
+        .where(eq(users.uuid, user_id))
+        .then()
     }
     async updateCitta(user_id: string, citta: string): Promise<void> {
         return db

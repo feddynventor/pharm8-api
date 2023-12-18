@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { User, UserToken } from "../../core/entities/user";
+import { UserPayload, UserToken } from "../../core/entities/user";
 
 import { IFarmaciaRepository } from "../../core/interfaces/farmacia.iface";
 import { GetFarmaciaParams, NewFarmaciaParams, SignFarmaciaParams } from "../../core/schemas/farmacia.schema";
@@ -67,7 +67,7 @@ export const findFarmacia = (
 export const myCityFarmacie = (
     farmaciaRepository: IFarmaciaRepository
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
-    const {citta} = request.user as User
+    const {citta} = (request.user as UserToken).user as UserPayload
     if (!citta) {
         reply.status(404).send({message: "Utente non ha citta"})
         return
