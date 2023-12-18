@@ -41,7 +41,7 @@ export const findFarmacia = (
 
     const data = request.query as GetFarmaciaParams
 
-    if (typeof data.nome !== "undefined"){
+    if (data.nome && data.citta){
         await farmaciaRepository
         .farmaciaFromNome(data.nome,data.citta)
         .then(res => {
@@ -51,12 +51,22 @@ export const findFarmacia = (
         .catch(err => {
             reply.status(500).send(err)
         })
-    } else {
+    } else if (data.citta) {
         await farmaciaRepository
         .farmaciaFromCitta(data.citta)
         .then(res => {
             if (res.length>0) reply.status(200).send(res)
             else reply.status(404).send({message: "Nessuna farmacia in questa citta"})
+        })
+        .catch(err => {
+            reply.status(500).send(err)
+        })
+    } else {
+        await farmaciaRepository
+        .farmaciaFromCitta((request.user as UserToken).user.citta)
+        .then(res => {
+            if (res.length>0) reply.status(200).send(res)
+            else reply.status(404).send({message: "Nessuna farmacia nella tua citta"})
         })
         .catch(err => {
             reply.status(500).send(err)
@@ -75,7 +85,6 @@ export const myCityFarmacie = (
     await farmaciaRepository
     .farmaciaFromCitta( citta )
     .then( res => {
-        console.log(res)
         if (res.length==0) reply.status(404).send({message: "Nessuna farmacia nella tua citta"})
         else reply.status(200).send(res)
     })

@@ -43,12 +43,12 @@ const getFarmaciaParams = {
         nome: { type: "string", minLength: 3 },
         citta: { type: "string", minLength: 2 },
     },
-    required: ["citta"],
+    required: [],
 } as const;
 export type GetFarmaciaParams = FromSchema<typeof getFarmaciaParams>
 
 export const getFarmaciaSchema: FastifySchema = {
-    description: "Ottieni farmacia da città o nome",
+    description: "Ottieni farmacia da città o nome. Se non si specifica nulla, ritorna tutte le farmacie della citta dell'utente loggato",
     tags: ["farmacie"],
     security: [{ Bearer: [] }],
     querystring: getFarmaciaParams

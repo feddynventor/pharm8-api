@@ -39,14 +39,5 @@ export const farmaciaRoutes = (farmaciaRepository: IFarmaciaRepository, magazzin
         security: [{ Bearer: [] }],
       },
       handler: listGiacenza(magazzinoRepository)
-    },{
-      method: 'GET',
-      url: '/mycity',
-      schema: {
-        description: "Ottieni farmacie nella citta dell'utente loggato",
-        tags: ["farmacie"],
-        security: [{ Bearer: [] }]
-      },
-      handler: myCityFarmacie(farmaciaRepository)
     }
   ])
