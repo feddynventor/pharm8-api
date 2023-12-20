@@ -8,13 +8,9 @@ import { MagazzinoRepository } from "./magazzino.repo";
 import * as common from "./common.repo";
 import { OrderStatus, Ordine, OrdineUtente } from "../../core/entities/ordine";
 
-import { FirebaseApp } from "../../firebase";
+import { sendNotification } from "../../firebase";
 
 export class OrdineRepository implements IOrdineRepository {
-    notification: FirebaseApp
-    constructor() {
-        this.notification = new FirebaseApp()
-    }
     async newOrdine(user_id: string, piva: string, aic: string, qt_richiesta: number): Promise<void> {
         return MagazzinoRepository.prototype.checkDisponibilita(aic)
         .then( async res => {
@@ -150,7 +146,7 @@ export class OrdineRepository implements IOrdineRepository {
                 .where(eq(ordini.uuid, order_id))
                 .then( async ()=>{
                     if (!res.utente.firebase) return
-                    await this.notification.send(
+                    await sendNotification(
                         "Ordine per "+res.quantita+"x "+res.prodotto.nome,
                         res.utente.firebase
                     )
@@ -198,7 +194,7 @@ export class OrdineRepository implements IOrdineRepository {
             .where(eq(ordini.uuid, order_id))
             .then( async ()=>{
                 if (!res.utente.firebase) return
-                await this.notification.send(
+                await sendNotification(
                     "Hai ritirato "+res.quantita+"x "+res.prodotto.nome,
                     res.utente.firebase
                 )
