@@ -8,11 +8,11 @@ import { OrderStatus } from "../../core/entities/ordine";
 export const newOrdine = (
     ordineRepository: IOrdineRepository
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
-    const { codice_farmacia, aic, qt } = request.body as NewOrdineParams
+    const { piva, aic, qt } = request.body as NewOrdineParams
     await ordineRepository
     .newOrdine(
         (request.user as UserToken).payload.uuid,
-        codice_farmacia, aic, 
+        piva, aic, 
         qt? qt : 1
     )
     .catch(err => {

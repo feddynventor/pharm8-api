@@ -51,15 +51,15 @@ export class UserRepository implements IUserRepository {
         }).then()
     }
 
-    async deleteUser(user_id: string, farmacia_uuid?: string): Promise<void> {
+    async deleteUser(user_id: string, piva?: string): Promise<void> {
         return db
         .delete(users)
         .where(eq(users.uuid, user_id))
         .then( async ()=>{
-            if (!farmacia_uuid) return; 
+            if (!piva) return; 
             return db
             .delete(farmacie)
-            .where(eq(farmacie.codice_farmacia, farmacia_uuid))
+            .where(eq(farmacie.piva, piva))
             .then()
         })
     }
@@ -94,11 +94,11 @@ export class UserRepository implements IUserRepository {
         })
     }
 
-    async updateFarmaciaPreferita(user_id: string, codice_farmacia: string): Promise<void> {
+    async updateFarmaciaPreferita(user_id: string, piva: string): Promise<void> {
         return db
         .select({uuid: farmacie.uuid})
         .from(farmacie)
-        .where(eq(farmacie.codice_farmacia, codice_farmacia))
+        .where(eq(farmacie.piva, piva))
         .then(async (res) => {
             if (res.length==0) throw new Error("Farmacia non trovata")
             else {

@@ -4,16 +4,15 @@ import { FromSchema } from "json-schema-to-ts";
 const newFarmaciaParams = {
     type: "object",
     properties: {
-        nome: { type: "string", minLength: 3 },
-        citta: { type: "string", minLength: 2 },
-        codice_farmacia: { type: "string", minLength: 11, maxLength: 11 }
+        codice_farmacia: { type: "number" },
+        piva: { type: "string", minLength: 11, maxLength: 11 }
     },
-    required: ["citta","nome","codice_farmacia"],
+    required: ["codice_farmacia","piva"],
 } as const;
 export type NewFarmaciaParams = FromSchema<typeof newFarmaciaParams>
 
 export const newFarmaciaSchema: FastifySchema = {
-    description: "Registra una nuova farmacia e la associa all'utente loggato, come primo gestore e amministratore",
+    description: "Associa all'utente loggato la farmacia specificata dal codice identificativo ministeriale, associazione come primo gestore e amministratore",
     tags: ["farmacie"],
     security: [{ Bearer: [] }],
     body: newFarmaciaParams

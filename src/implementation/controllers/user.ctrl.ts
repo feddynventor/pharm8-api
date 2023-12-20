@@ -60,7 +60,7 @@ export const deleteUser = (
     await userRepository
     .deleteUser( 
         (request.user as UserToken).payload.uuid,
-        (request.user as UserToken).user.worksIn?.codice_farmacia )
+        (request.user as UserToken).user.worksIn?.piva )
     .then( () => {
         reply.status(200)
     })
@@ -87,13 +87,13 @@ export const updateUser = (
     userRepository: IUserRepository,
 ) => async function (request: FastifyRequest, reply: FastifyReply) {
 
-    const { citta, farmacia_preferita: codice_farmacia } = request.body as UpdateUserParams
+    const { citta, farmacia_preferita: piva } = request.body as UpdateUserParams
 
-    if (codice_farmacia) {
+    if (piva) {
         await userRepository
             .updateFarmaciaPreferita( 
                 (request.user as UserToken).payload.uuid,
-                codice_farmacia
+                piva
             ).then(() => {
                 reply.status(200)
             })

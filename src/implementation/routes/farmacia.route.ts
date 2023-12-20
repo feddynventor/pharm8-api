@@ -6,13 +6,13 @@ import { MagazzinoRepository } from "../repositories/magazzino.repo";
 import { getFarmaciaSchema, newFarmaciaSchema, signFarmaciaSchema } from "../../core/schemas/farmacia.schema";
 import { updateGiacenzaSchema } from "../../core/schemas/magazzino.schema";
 
-import { findFarmacia, myCityFarmacie, newFarmacia, signFarmacia } from "../controllers/farmacia.ctrl";
+import { findFarmacia, newFarmacia, signFarmacia } from "../controllers/farmacia.ctrl";
 import { listGiacenza, updateGiacenza } from "../controllers/magazzino.ctrl";
 
 export const farmaciaRoutes = (farmaciaRepository: IFarmaciaRepository, magazzinoRepository: MagazzinoRepository): RouteOptions[] => ([
     {
       method: 'POST',
-      url: '/create',
+      url: '/',
       schema: newFarmaciaSchema,
       handler: newFarmacia(farmaciaRepository)
     },{
