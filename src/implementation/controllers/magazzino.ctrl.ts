@@ -33,7 +33,9 @@ export const checkDisponibilita = (
     await magazzinoRepository
     .checkDisponibilita( 
         (request.params as CheckDisponibilitaParams).aic
-    ).then( async res => {
+    )
+    .then( async res => {
+        let favourite: Disponibilita;
         await UserRepository
         .prototype.getUser((request.user as UserToken).payload.uuid as string)
         .then( user => {
@@ -43,7 +45,7 @@ export const checkDisponibilita = (
                 disponibilita: 
                     (request.query as CheckDisponibilitaQuery).tutte == "1"
                     ? res.filter( disp => disp.farmacia?.piva != user.favourite?.piva)
-                    : res.filter( disp => disp.farmacia?.citta == user.citta && disp.farmacia?.piva != user.favourite?.piva)
+                    : res.filter( disp => disp.farmacia?.citta != user.citta && disp.farmacia?.piva != user.favourite?.piva)
             })
         })
     })
