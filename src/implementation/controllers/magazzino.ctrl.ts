@@ -45,7 +45,7 @@ export const checkDisponibilita = (
                 disponibilita: 
                     (request.query as CheckDisponibilitaQuery).tutte == "1"
                     ? res.filter( disp => disp.farmacia?.codice_farmacia != user.favourite?.codice_farmacia)
-                    : res.filter( disp => disp.farmacia?.citta != user.citta && disp.farmacia?.codice_farmacia != user.favourite?.codice_farmacia)
+                    : res.filter( disp => disp.farmacia?.citta == user.citta && disp.farmacia?.codice_farmacia != user.favourite?.codice_farmacia)
             })
         })
     })
