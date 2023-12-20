@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { uuid, pgTable, varchar, index, real, decimal, pgEnum, timestamp } from "drizzle-orm/pg-core";
+import { uuid, pgTable, varchar, index, real, integer, pgEnum, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm/sql";
 
 export const users = pgTable(
@@ -55,7 +55,7 @@ export const magazzino = pgTable(
         uuid: uuid('uuid').primaryKey().default(sql`gen_random_uuid()`),
         farmacia: uuid('farmacia').notNull().references(()=>farmacie.uuid, {onDelete: 'cascade'}),
         prodotto: uuid('prodotto').notNull().references(()=>prodotti.uuid),
-        quantita: real('quantita').notNull().default(0),
+        quantita: integer('quantita').notNull().default(0),
     }, (table) => ({
         index: index("farmacia_prodotto_idx").on(table.farmacia, table.prodotto)
     })
