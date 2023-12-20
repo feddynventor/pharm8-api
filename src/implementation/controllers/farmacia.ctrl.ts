@@ -46,7 +46,7 @@ export const findFarmacia = (
         .farmaciaFromNome(data.nome,data.citta)
         .then(res => {
             if (res.length>0) reply.status(200).send(res)
-            else reply.status(404).send({mwssage: "Nessun risultato"})
+            else reply.status(404).send({message: "Nessun risultato"})
         })
         .catch(err => {
             reply.status(500).send(err)
