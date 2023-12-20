@@ -23,8 +23,7 @@ export const userRelations = relations(users, ({ one })=>({
     }),
     worksIn: one(farmacie, {
         fields: [users.worksIn],
-        references: [farmacie.uuid],
-        relationName: "workerOfFarmacia"
+        references: [farmacie.uuid]
     })
 }))
 
@@ -41,7 +40,7 @@ export const farmacie = pgTable(
     })
 )
 export const farmacieRelations = relations(farmacie, ({ many })=>({
-    worksIn: many(users, { relationName: "workerOfFarmacia"})
+    worksIn: many(users)
 }))
 
 export const prodotti = pgTable(
