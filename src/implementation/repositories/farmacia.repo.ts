@@ -69,8 +69,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
             where: filters
         }).then(res => {
             if (!!res && res.length==0) throw new Error("Nessuna farmacia trovata")
-            // else return res.filter(f => f.worksIn.length>0)
-            else return res
+            else return res.filter(f => f.worksIn.length>0)
         })
     }
     async farmaciaFromCitta(citta: string): Promise<FarmaciaPayload[]> {
