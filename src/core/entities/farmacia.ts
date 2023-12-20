@@ -2,11 +2,9 @@ export interface Farmacia {
     uuid: string
     nome: string
     citta: string
-    indirizzo: string
-    codice_farmacia: number
-    piva: string
+    codice_farmacia: string
 }
-export type FarmaciaPayload = Omit<Farmacia, 'uuid'|'codice_farmacia'>
+export type FarmaciaPayload = Omit<Farmacia, 'uuid'>
 
 export class Farmacia implements Farmacia{
     constructor(obj: FarmaciaPayload){

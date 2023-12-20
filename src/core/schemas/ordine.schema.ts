@@ -6,10 +6,10 @@ const newOrdineParams = {
     type: "object",
     properties: {
         aic: { type: "string", minLength: 9 },
-        piva: { type: "string", minLength: 11, maxLength: 11 },
+        codice_farmacia: { type: "string", minLength: 11, maxLength: 11 },
         qt: { type: "number", minimum: 1 }
     },
-    required: ["aic","piva"],
+    required: ["aic","codice_farmacia"],
 } as const;
 export type NewOrdineParams = FromSchema<typeof newOrdineParams>;
 

@@ -39,13 +39,13 @@ export const checkDisponibilita = (
         await UserRepository
         .prototype.getUser((request.user as UserToken).payload.uuid as string)
         .then( user => {
-            const favourite = res.filter( disp => disp.farmacia?.piva == user.favourite?.piva)[0] as Disponibilita
+            const favourite = res.filter( disp => disp.farmacia?.codice_farmacia == user.favourite?.codice_farmacia)[0] as Disponibilita
             reply.status(200).send({
                 preferita: favourite,
                 disponibilita: 
                     (request.query as CheckDisponibilitaQuery).tutte == "1"
-                    ? res.filter( disp => disp.farmacia?.piva != user.favourite?.piva)
-                    : res.filter( disp => disp.farmacia?.citta != user.citta && disp.farmacia?.piva != user.favourite?.piva)
+                    ? res.filter( disp => disp.farmacia?.codice_farmacia != user.favourite?.codice_farmacia)
+                    : res.filter( disp => disp.farmacia?.citta != user.citta && disp.farmacia?.codice_farmacia != user.favourite?.codice_farmacia)
             })
         })
     })

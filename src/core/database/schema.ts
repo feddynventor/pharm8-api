@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { uuid, pgTable, varchar, index, real, integer, pgEnum, timestamp } from "drizzle-orm/pg-core";
+import { uuid, pgTable, varchar, index, real, decimal, pgEnum, timestamp } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm/sql";
 
 export const users = pgTable(
@@ -32,16 +32,11 @@ export const farmacie = pgTable(
         uuid: uuid('uuid').primaryKey().default(sql`gen_random_uuid()`),
         nome: varchar('ragione_sociale').notNull(),
         citta: varchar('citta').notNull(),
-        indirizzo: varchar('indirizzo').notNull(),
-        codice_farmacia: integer('codice_farmacia').unique().notNull(),
-        piva: varchar('piva', {length: 11}).notNull(),
+        codice_farmacia: varchar('codice_farmacia', {length: 11}).unique().notNull(),
     }, (table) => ({
-        index: index("farmacie_idx").on(table.uuid, table.piva, table.codice_farmacia)
+        index: index("farmacie_idx").on(table.uuid, table.citta, table.codice_farmacia)
     })
 )
-export const farmacieRelations = relations(farmacie, ({ many })=>({
-    worksIn: many(users)
-}))
 
 export const prodotti = pgTable(
     "prodotti", {
@@ -60,7 +55,7 @@ export const magazzino = pgTable(
         uuid: uuid('uuid').primaryKey().default(sql`gen_random_uuid()`),
         farmacia: uuid('farmacia').notNull().references(()=>farmacie.uuid, {onDelete: 'cascade'}),
         prodotto: uuid('prodotto').notNull().references(()=>prodotti.uuid),
-        quantita: integer('quantita').notNull().default(0),
+        quantita: real('quantita').notNull().default(0),
     }, (table) => ({
         index: index("farmacia_prodotto_idx").on(table.farmacia, table.prodotto)
     })

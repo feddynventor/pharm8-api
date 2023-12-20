@@ -46,31 +46,31 @@ export const findFarmacia = (
         .farmaciaFromNome(data.nome,data.citta)
         .then(res => {
             if (res.length>0) reply.status(200).send(res)
-            else reply.status(404).send({message: "Nessun risultato"})
+            else reply.status(404).send({mwssage: "Nessun risultato"})
         })
-    } else if (data.citta && !data.nome) {
+        .catch(err => {
+            reply.status(500).send(err)
+        })
+    } else if (data.citta) {
         await farmaciaRepository
         .farmaciaFromCitta(data.citta)
         .then(res => {
             if (res.length>0) reply.status(200).send(res)
             else reply.status(404).send({message: "Nessuna farmacia in questa citta"})
         })
-    } else if (data.nome && !data.citta) {
-        await farmaciaRepository
-        .farmaciaSearch(data.nome)
-        .then(res => {
-            if (res.length>0) reply.status(200).send(res)
-            else reply.status(404).send({message: "Nessun risultato"})
+        .catch(err => {
+            reply.status(500).send(err)
         })
-    } else if (!data.citta && !data.nome) {
+    } else {
         await farmaciaRepository
         .farmaciaFromCitta((request.user as UserToken).user.citta)
         .then(res => {
             if (res.length>0) reply.status(200).send(res)
             else reply.status(404).send({message: "Nessuna farmacia nella tua citta"})
         })
-    } else {
-        reply.status(500)
+        .catch(err => {
+            reply.status(500).send(err)
+        })
     }
 }
 
