@@ -21,6 +21,15 @@ export const farmaciaRoutes = (farmaciaRepository: IFarmaciaRepository, magazzin
       schema: getFarmaciaSchema,
       handler: findFarmacia(farmaciaRepository)
     },{
+      method: 'GET',
+      url: '/mycity',
+      schema: {
+        description: "Ritorna tutte le farmacie della città dell'utente loggato",
+        tags: ['farmacie'],
+        security: [{ Bearer: [] }],
+      },
+      handler: findFarmacia(farmaciaRepository)
+    },{
       method: 'POST',
       url: '/signin',
       schema: signFarmaciaSchema,

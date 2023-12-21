@@ -6,7 +6,7 @@ const newOrdineParams = {
     type: "object",
     properties: {
         aic: { type: "string", minLength: 9 },
-        codice_farmacia: { type: "string", minLength: 11, maxLength: 11 },
+        codice_farmacia: { type: "string", minLength: 5, maxLength: 5 },
         qt: { type: "number", minimum: 1 }
     },
     required: ["aic","codice_farmacia"],
