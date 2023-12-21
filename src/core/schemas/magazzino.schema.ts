@@ -46,7 +46,7 @@ const checkDisponibilitaQuery = {
 export type CheckDisponibilitaQuery = FromSchema<typeof checkDisponibilitaQuery>;
 
 export const checkDisponibilitaSchema: FastifySchema = {
-    description: "Ritorna tutte le farmacie con disponibilita e relativa quantita",
+    description: "Ritorna tutte le farmacie con disponibilità e relativa quantita. `tutte` serve per ritornare le farmacie di tutte le città",
     tags: ['prodotto'],
     security: [{ Bearer: [] }],
     querystring: checkDisponibilitaQuery,

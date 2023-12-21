@@ -51,12 +51,22 @@ export const findFarmacia = (
         .catch(err => {
             reply.status(500).send(err)
         })
-    } else if (data.citta) {
+    } else if (data.citta && !data.nome) {
         await farmaciaRepository
         .farmaciaFromCitta(data.citta)
         .then(res => {
             if (res.length>0) reply.status(200).send(res)
             else reply.status(404).send({message: "Nessuna farmacia in questa citta"})
+        })
+        .catch(err => {
+            reply.status(500).send(err)
+        })
+    } else if (!data.citta && data.nome) {
+        await farmaciaRepository
+        .farmaciaFromNome(data.nome, (request.user as UserToken).user.citta) //ricerca nella citta dell'utente di default
+        .then(res => {
+            if (res.length>0) reply.status(200).send(res)
+            else reply.status(404).send({message: "Nessun risultato"})
         })
         .catch(err => {
             reply.status(500).send(err)

@@ -22,7 +22,11 @@ export class MagazzinoRepository implements IMagazzinoRepository {
     async listGiacenza(farmacia_uuid: string): Promise<Disponibilita[]> {
         return db.query.magazzino.findMany({
             with: {
-                prodotto: true
+                prodotto: {
+                    columns: {
+                        uuid: false
+                    }
+                }
             },
             columns: {
                 uuid: false,

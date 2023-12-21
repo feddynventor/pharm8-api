@@ -68,7 +68,7 @@ export class FarmaciaRepository implements IFarmaciaRepository {
         return db.execute(sql`select * from ${farmacie} where ${farmacie.citta} = ${citta.toUpperCase()} AND to_tsvector(${farmacie.nome}) @@ to_tsquery('simple',${nome+":*"})`)
         .then(res => {
             return res.rows.map(({
-                uuid, ...keep   //campi tradotti da ORM
+                uuid, citta, ...keep   //campi tradotti da ORM
             })=>keep) as FarmaciaPayload[]
         })
     }
