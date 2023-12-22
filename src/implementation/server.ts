@@ -25,14 +25,18 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
       secret: 'nonsihamailapappapronta987324'
     })
 
-    const unprotectedRoutes = ['/auth','/docs']
-
     const userRepository = new UserRepository()
+    const unprotectedRoutes = [
+      '/auth',
+      '/docs',
+      '/farmacie/find',
+      '/prodotti/avail'
+    ]
 
     server.addHook('onRequest', (request, reply, next) => {
-      const unproc = unprotectedRoutes.filter( route => {
-        if (request.originalUrl.startsWith(basePath+route)) return route
-      })
+      const unproc = unprotectedRoutes.filter(  //cerca se URI richiesto rientra tra quelli non protetti
+        route => request.originalUrl.startsWith(basePath+route)
+      )
       if (unproc.length>0) {
         next()
         return;

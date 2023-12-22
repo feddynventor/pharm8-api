@@ -35,7 +35,11 @@ export const checkDisponibilita = (
         (request.params as CheckDisponibilitaParams).aic
     )
     .then( async res => {
-        let favourite: Disponibilita;
+        if (!request.user) {
+            if (res.length == 0) reply.status(404).send({message: "Nessun risultato"})
+            else reply.status(200).send(res)
+            return
+        }
         await UserRepository
         .prototype.getUser((request.user as UserToken).payload.uuid as string)
         .then( user => {
@@ -50,7 +54,7 @@ export const checkDisponibilita = (
         })
     })
     .catch( err => {
-        reply.status(400).send(err)
+        reply.status(500).send(err)
     })
 }
 
