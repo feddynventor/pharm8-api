@@ -63,7 +63,7 @@ export const dispatchOrdine = (
         reply.code(200)
     })
     .catch(err => {
-        reply.status(400).send(err)
+        reply.status(404).send(err)
     })
 }
 
@@ -77,6 +77,6 @@ export const deliverOrdine = (
         reply.code(200)
     })
     .catch(err => {
-        reply.status(400).send(err)
+        reply.status(404).send(err)
     })
 }

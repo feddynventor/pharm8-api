@@ -10,27 +10,20 @@ export class FirebaseApp {
         })
     }
     async send(body: string, token: string): Promise<void> {
-        return getMessaging(this.instance).send({
+        return getMessaging(this.instance)
+        .send({
             notification: {
                 title: "Pharmate",
                 body
             },
             token
-        }).then()
+        })
+        .then( msg_id => {
+            console.log(msg_id) //ai fini di primo debug delle notifiche asincrone, #TODO: rimuovere
+        })
+        .catch( err => {
+            console.log(err)  //ai fini di primo debug delle notifiche asincrone, #TODO: rimuovere
+        } )
+
     }
 }
-
-// export const sendNotification = async (body: string, token: string): Promise<void> =>{
-// // export const sendNotification = async (notification: {body: string, title: string}, token: string): Promise<void> =>{
-//     return getMessaging(
-//         initializeApp({
-//             credential: credential.cert(process.env.APP_ROOT+"/credentials/firebase-adminsdk.json")
-//         })
-//     ).send({
-//         notification: {
-//             title: "Pharmate",
-//             body
-//         },
-//         token
-//     }).then()
-// }

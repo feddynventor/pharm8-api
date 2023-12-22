@@ -150,7 +150,7 @@ export class OrdineRepository implements IOrdineRepository {
                 .where(eq(ordini.uuid, order_id))
                 .then( async ()=>{
                     if (!res.utente.firebase) return
-                    await this.notification.send(
+                    this.notification.send(
                         "Ordine per "+res.quantita+"x "+res.prodotto.nome,
                         res.utente.firebase
                     )
@@ -198,7 +198,7 @@ export class OrdineRepository implements IOrdineRepository {
             .where(eq(ordini.uuid, order_id))
             .then( async ()=>{
                 if (!res.utente.firebase) return
-                await this.notification.send(
+                this.notification.send(
                     "Hai ritirato "+res.quantita+"x "+res.prodotto.nome,
                     res.utente.firebase
                 )
