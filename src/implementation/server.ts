@@ -37,7 +37,7 @@ export const createServer = async (basePath: string): Promise<FastifyInstance> =
       const unproc = unprotectedRoutes.filter(  //cerca se URI richiesto rientra tra quelli non protetti
         route => request.originalUrl.startsWith(basePath+route)
       )
-      if (unproc.length>0) {
+      if (unproc.length>0 && !request.headers.authorization) {
         next()
         return;
       }
