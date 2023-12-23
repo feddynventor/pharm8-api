@@ -19,24 +19,6 @@ export const newFarmaciaSchema: FastifySchema = {
     body: newFarmaciaParams
 }
 
-
-const signFarmaciaParams = {
-    type: "object",
-    properties: {
-        cf: { type: "string", minLength: 16, maxLength: 16 }
-    },
-    required: ["cf"],
-} as const;
-export type SignFarmaciaParams = FromSchema<typeof signFarmaciaParams>
-
-export const signFarmaciaSchema: FastifySchema = {
-    description: "Associa l'utente specificato tramite Codice Fiscale alla farmacia che si gestisce [worksIn]",
-    tags: ["farmacie"],
-    security: [{ Bearer: [] }],
-    body: signFarmaciaParams
-}
-
-
 const getFarmaciaParams = {
     type: "object",
     properties: {

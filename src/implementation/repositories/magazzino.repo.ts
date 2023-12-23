@@ -47,7 +47,8 @@ export class MagazzinoRepository implements IMagazzinoRepository {
                 with: {
                     farmacia: {
                         columns: {
-                            uuid: false
+                            uuid: false,
+                            gestore: false
                         }
                     }
                 },

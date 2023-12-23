@@ -10,8 +10,7 @@ export const users = pgTable(
         fullname: varchar("full_name", {length: 256}),
         citta: varchar("citta", {length: 128}).notNull(),
         firebase: varchar("firebase_token", {length: 163}),
-        favourite: uuid("farmacia_preferita").references(()=>farmacie.uuid),
-        worksIn: uuid("dipendente_farmacia").references(()=>farmacie.uuid)
+        favourite: uuid("farmacia_preferita")
     }, (table) => ({
         index: index("cf_idx").on(table.cf, table.uuid),
     })
@@ -22,8 +21,8 @@ export const userRelations = relations(users, ({ one })=>({
         references: [farmacie.uuid]
     }),
     worksIn: one(farmacie, {
-        fields: [users.worksIn],
-        references: [farmacie.uuid]
+        fields: [users.uuid],
+        references: [farmacie.gestore]
     })
 }))
 
@@ -33,6 +32,7 @@ export const farmacie = pgTable(
         nome: varchar('ragione_sociale').notNull(),
         citta: varchar('citta').notNull(),
         codice_farmacia: varchar('codice_farmacia', {length: 5}).unique().notNull(),
+        gestore: uuid('gestore').notNull().references(()=>users.uuid, {onDelete: 'cascade'}), //nessuna query relazionale per farmacia, vedi userRelations
     }, (table) => ({
         index: index("farmacie_idx").on(table.uuid, table.citta, table.codice_farmacia)
     })

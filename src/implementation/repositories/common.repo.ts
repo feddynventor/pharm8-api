@@ -4,13 +4,14 @@ import { farmacie, magazzino, prodotti, users } from "../../core/database/schema
 import { and, eq } from "drizzle-orm/sql/expressions"
 
 export const getFarmaciaFromEditor = async (user_id: string): Promise<string> => {
-    return db
-    .select({farmacia_uuid: users.worksIn})
-    .from(users)
-    .where(eq(users.uuid, user_id))
-    .then(res => {
-        if (res.length==0 || !res[0].farmacia_uuid) throw new Error("Utente non è un gestore di farmacia")
-        else return res[0].farmacia_uuid
+    return db.query.farmacie.findFirst({
+        columns: {
+            uuid: true
+        },
+        where: eq(farmacie.gestore, user_id),
+    }).then(res => {
+        if (!res) throw new Error("Utente non è un gestore di farmacia")
+        else return res.uuid
     })
 }
 export const getFarmaciaFromCodice = async (codice_farmacia: string): Promise<string> => {

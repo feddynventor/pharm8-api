@@ -84,11 +84,10 @@ export class OrdineRepository implements IOrdineRepository {
     async getOrdiniUtente(user_id: string, status: OrderStatus): Promise<OrdineUtente[] | void[]> {
         return db.query.ordini.findMany({
             with: {
-                // farmacia: true,
-                // prodotto: true,
                 farmacia: {
                     columns: {
-                        uuid: false
+                        uuid: false,
+                        gestore: false
                     }
                 },
                 prodotto: {

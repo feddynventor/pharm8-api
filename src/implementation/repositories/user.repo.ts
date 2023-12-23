@@ -39,6 +39,7 @@ export class UserRepository implements IUserRepository {
                 worksIn: {
                     columns: {
                         uuid: false,
+                        gestore: false //UUID utente stesso
                     }
                 }
             },
