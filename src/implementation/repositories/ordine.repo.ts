@@ -150,7 +150,7 @@ export class OrdineRepository implements IOrdineRepository {
                 .then( async ()=>{
                     if (!res.utente.firebase) return
                     this.notification.send(
-                        "Ordine per "+res.quantita+"x "+res.prodotto.nome,
+                        "Ordine accettato per "+res.quantita+"x "+res.prodotto.nome,
                         res.utente.firebase
                     )
                 })
